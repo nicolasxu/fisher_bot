@@ -9,14 +9,14 @@ import java.util.Date;
 public class Bar {
 	private static final SimpleDateFormat FORMAT = new SimpleDateFormat( "yyyyMMdd HH:mm:ss"); // format for historical query
 
-	private final long m_time;
-	private final double m_high;
-	private final double m_low;
-	private final double m_open;
-	private final double m_close;
-	private final double m_wap;
-	private final long m_volume;
-	private final int m_count;
+	public long m_time;
+	public double m_high;
+	public double m_low;
+	public double m_open;
+	public double m_close;
+	public double m_wap;
+	public long m_volume;
+	public int m_count;
 
 	public long time()		{ return m_time; }
 	public double high() 	{ return m_high; }
@@ -26,6 +26,8 @@ public class Bar {
 	public double wap() 	{ return m_wap; }
 	public long volume() 	{ return m_volume; }
 	public int count() 		{ return m_count; }
+
+
 
 	public Bar( long time, double high, double low, double open, double close, double wap, long volume, int count) {
 		m_time = time;
@@ -37,6 +39,8 @@ public class Bar {
 		m_volume = volume;
 		m_count = count;
 	}
+
+
 
 	public String formattedTime() {
 		return Formats.fmtDate( m_time * 1000);
