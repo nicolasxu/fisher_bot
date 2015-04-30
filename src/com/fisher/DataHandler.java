@@ -30,7 +30,7 @@ public class DataHandler implements EWrapper{
     public double m_currentAskPrice;
     public boolean m_newBidAskPrice;
     public HashMap<Long, Double> m_temp5minTicks;
-    public Bar m_unfinishedBar;
+
 
 
     public DataHandler() {
@@ -277,20 +277,27 @@ public class DataHandler implements EWrapper{
                 double mid = (m_currentAskPrice + m_currentBidPrice) / 2;
 
                 // fix unfinished bar time: need to set time, e.g: previous bar time + 300
-                long lastBarTime = this.m_bars.get(this.m_bars.size() - 1).time();
-                this.m_unfinishedBar.m_time = lastBarTime + 60 * 5;
+                long lastBarTime = this.m_bars.get(this.m_bars.size() - 2).time();
+                Bar thisBar = m_bars.get(m_bars.size() -1);
+                thisBar.m_time = lastBarTime + 60 * 5;
 
-                // append to the end of the ArrayList
-                this.m_bars.add(this.m_unfinishedBar);
-                Bar lastBar = m_bars.get(m_bars.size() -1);
+                // print
+                Bar lastBar = m_bars.get(m_bars.size() - 1);
                 System.out.println("lastBar.time: " + lastBar.time() + " lastBar.open: " + lastBar.open() +
                         " lastBar.Close: " + lastBar.close() + " lastBar.low: "+ lastBar.low() +
                         " lastBar.high: "+ lastBar.high());
+                System.out.println("Number of bars: " + m_bars.size());
 
                 // create new unfinished bar
-                this.m_unfinishedBar = new Bar(time, mid, mid, mid, mid, -1, -1, -1 );
+                Bar unfinishedBar = new Bar(time, mid, mid, mid, mid, -1, -1, -1 );
+
+                // append to then end of bars
+                this.m_bars.add(unfinishedBar);
+
                 System.out.println(time + " - new 5 min bar");
-                m_temp5minTicks.clear(); // clear everything in temp tick hasp map
+
+                // clear everything in temp tick hasp map
+                m_temp5minTicks.clear();
                 System.out.println("m_temp5minTicks clearing: " + m_temp5minTicks.size());
 
             } else {
@@ -312,8 +319,11 @@ public class DataHandler implements EWrapper{
                         low = tickPrice;
                     }
                 }
+                double last5minCount = Math.floor(m_bars.get(m_bars.size() -1).m_time / (60 * 5));
+                double curr5minCount = Math.floor(time / (60*5));
 
-                if(this.m_unfinishedBar == null) {
+                if(curr5minCount > last5minCount) {
+                    // new 5 min during first init
                     double p1, p2, mid;
                     if (m_currentAskPrice > 0) {
                         p1 = m_currentAskPrice;
@@ -326,12 +336,16 @@ public class DataHandler implements EWrapper{
                         p2 = m_currentAskPrice;
                     }
                     mid = (p1+ p2) / 2;
-                    this.m_unfinishedBar = new Bar(time, mid, mid, mid, mid, -1, -1, -1);
+
+                    m_bars.add(new Bar(time, mid, mid, mid, mid, -1, -1, -1));
+
                 }
 
-                this.m_unfinishedBar.m_close = (m_currentAskPrice + m_currentAskPrice) / 2;
-                this.m_unfinishedBar.m_high = high;
-                this.m_unfinishedBar.m_low = low;
+                Bar unfinishedBar = m_bars.get(m_bars.size() - 1);
+
+                unfinishedBar.m_close = (m_currentAskPrice + m_currentAskPrice) / 2;
+                unfinishedBar.m_high = high;
+                unfinishedBar.m_low = low;
             }
         }
 
