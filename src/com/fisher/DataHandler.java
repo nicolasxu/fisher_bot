@@ -2,9 +2,9 @@ package com.fisher;
 
 import com.ib.client.*;
 import com.ib.controller.Bar;
-import com.ib.controller.ConcurrentHashSet;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.lang.Math;
@@ -29,7 +29,10 @@ public class DataHandler implements EWrapper{
     public double m_currentBidPrice;
     public double m_currentAskPrice;
     public boolean m_newBidAskPrice;
+    public int m_fiveMinBarRequestId;
+    public int m_marketDataRequestId;
     public HashMap<Long, Double> m_temp5minTicks;
+    public ArrayList<Double> m_fiveMinPrices;
 
 
 
@@ -41,6 +44,8 @@ public class DataHandler implements EWrapper{
         this.m_newBidAskPrice = false;
         this.m_currentAskPrice = 0;
         this.m_currentBidPrice = 0;
+        this.m_fiveMinBarRequestId = -1;
+        this.m_marketDataRequestId = -1;
 
 
         // init member variable
@@ -56,37 +61,111 @@ public class DataHandler implements EWrapper{
         this.m_contract.m_exchange = "IDEALPRO";
 
         this.m_bars = new ArrayList<Bar>();
+        this.m_fiveMinPrices = new ArrayList<Double>();;
         this.m_systemStartTimeString = "";
 
 
         m_request.eConnect(null, 7496, this.m_clientId);
 
         m_request.reqCurrentTime(); // request server time first
-        m_request.TwsConnectionTime(); // request tws connection time
 
 
     }
+
+
     public void fetchContractData () {
         System.out.println("fetching data...");
         List<TagValue> XYZ = new ArrayList<TagValue>();
-
-
+        this.m_fiveMinBarRequestId = this.m_reqId;
         this.m_request.reqHistoricalData(this.m_reqId++,
-                this.m_contract, this.m_systemStartTimeString + " CST", "2 D",
-                "5 mins", "BID_ASK", 0, 2, XYZ );
+                this.m_contract, this.m_systemStartTimeString + " EST", "2 D",
+                "5 mins", "MIDPOINT", 0, 2, XYZ);
+
+        // no need to create one, if current time is unfinished 5 min bar, then the last bar is the current unfinished one
 
     }
 
     public void requestLiveData () {
         System.out.println("Request live data...");
+        this.m_marketDataRequestId = this.m_reqId;
         List<TagValue> XYZ = new ArrayList<TagValue>();
         this.m_request.reqMktData(this.m_reqId++, this.m_contract, "233", false, XYZ);
+    }
+
+    public void handleNew5minBar(long time) {
+        // if new bar, create one and append it to m_bars
+
+        if(this.m_newBidAskPrice) {
+
+            double current5minCount =  Math.floor(time / (60 * 5));
+            double prev5minCount = Math.floor(this.m_currentServerTime / (60 * 5));
+
+            if(current5minCount > prev5minCount) {
+                // new five min bar
+                double midPrice = this.findMidPrice();
+                long lastBarTime = this.m_bars.get(this.m_bars.size() - 1).time();
+                Bar newBar = new Bar(lastBarTime + 5 * 60, midPrice, midPrice, midPrice, midPrice, -1, -1, -1);
+                this.m_bars.add(newBar);
+            }
+
+        }
+
+    }
+
+    public double findMidPrice() {
+        // find mid price based on latest bid and ask
+        double p1, p2, mid;
+        if (m_currentAskPrice > 0) {
+            p1 = m_currentAskPrice;
+        } else {
+            p1 = m_currentBidPrice;
+        }
+        if(m_currentBidPrice > 0) {
+            p2 = m_currentBidPrice;
+        } else {
+            p2 = m_currentAskPrice;
+        }
+        mid = (p1+ p2) / 2;
+
+        return mid;
+    }
+
+    public void handleTickPrice() {
+        // always put data to last m_bars
+
+        // 1. find the mid price
+        double mid = this.findMidPrice();
+
+        // 2. add to temp price list
+        this.m_fiveMinPrices.add(mid);
+
+        // 3. find high and low
+        double high = 0;
+        double low = 10;
+
+        for (Double price: m_fiveMinPrices) {
+            if(price > high) {
+                high = price;
+            }
+            if(price < low) {
+                low = price;
+            }
+        }
+
+        // 4. update last bar
+        int lastIndex = m_bars.size() - 1;
+        Bar lastBar = m_bars.get(lastIndex);
+        lastBar.m_high = high;
+        lastBar.m_low = low;
+        lastBar.m_close = mid;
+
+
     }
 
 
     @Override
     public void tickPrice(int tickerId, int field, double price, int canAutoExecute) {
-        this.m_request.reqCurrentTime();
+
         String fieldDesc = TickType.getField(field);
 
         switch (field) {
@@ -102,7 +181,12 @@ public class DataHandler implements EWrapper{
                 break;
         }
 
-        //System.out.println("tickPrice() - Req: " + tickerId + " field:" + fieldDesc + " price: " + price);
+        this.handleTickPrice();
+
+        // price is handled in currentTime() handler
+        this.m_request.reqCurrentTime();
+
+
     }
 
     @Override
@@ -238,11 +322,28 @@ public class DataHandler implements EWrapper{
 
         */
 
-        if(open != -1) {
+
+        if(open != -1 && reqId == this.m_fiveMinBarRequestId) {
             // Bar( long time, double high, double low, double open, double close, double wap, long volume, int count)
-            Bar bar = new Bar(Long.parseLong(date.trim()), high, low, open, close, -1, -1, -1);
+            long cstTime = Long.parseLong(date.trim());
+            Bar bar = new Bar(cstTime, high, low, open, close, -1, -1, -1);
+
             this.m_bars.add(bar);
         }
+
+        if(open == -1 && reqId == this.m_fiveMinBarRequestId) {
+            // request history data completed
+            DecimalFormat f = new DecimalFormat("0.00000");
+            DateFormat df = new SimpleDateFormat("yyyyMMdd HH:mm:ss");  // yyyymmdd hh:mm:ss tmz
+
+
+            for(Bar b: m_bars) {
+                Date d = new Date(b.m_time * 1000);
+
+                System.out.println("time: " + b.m_time + " " + df.format(d) + " open: "+ f.format(b.open()) + " close: " + f.format(b.close()));
+            }
+        }
+
     }
 
     @Override
@@ -268,95 +369,17 @@ public class DataHandler implements EWrapper{
     @Override
     public void currentTime(long time) {
 
-        if(this.m_newBidAskPrice) {
-            // when receiving new bid or ask price
-            double current5minCount =  Math.floor(time / (60*5));
-            double prev5minCount = Math.floor(this.m_currentServerTime / (60 * 5));
-            if(current5minCount > prev5minCount) {
-                // new 5 min bar
-                double mid = (m_currentAskPrice + m_currentBidPrice) / 2;
-
-                // fix unfinished bar time: need to set time, e.g: previous bar time + 300
-                long lastBarTime = this.m_bars.get(this.m_bars.size() - 2).time();
-                Bar thisBar = m_bars.get(m_bars.size() -1);
-                thisBar.m_time = lastBarTime + 60 * 5;
-
-                // print
-                Bar lastBar = m_bars.get(m_bars.size() - 1);
-                System.out.println("lastBar.time: " + lastBar.time() + " lastBar.open: " + lastBar.open() +
-                        " lastBar.Close: " + lastBar.close() + " lastBar.low: "+ lastBar.low() +
-                        " lastBar.high: "+ lastBar.high());
-                System.out.println("Number of bars: " + m_bars.size());
-
-                // create new unfinished bar
-                Bar unfinishedBar = new Bar(time, mid, mid, mid, mid, -1, -1, -1 );
-
-                // append to then end of bars
-                this.m_bars.add(unfinishedBar);
-
-                System.out.println(time + " - new 5 min bar");
-
-                // clear everything in temp tick hasp map
-                m_temp5minTicks.clear();
-                System.out.println("m_temp5minTicks clearing: " + m_temp5minTicks.size());
-
-            } else {
-                // still current 5 min bar
-                m_temp5minTicks.put(time, (m_currentAskPrice + m_currentAskPrice) / 2 );
-                //System.out.println("tick number is: " + m_temp5minTicks.size());
-
-
-                // update bar
-                double high = 0;
-                double low = 10;
-                for(HashMap.Entry<Long, Double> entry : m_temp5minTicks.entrySet()) {
-
-                    Double tickPrice = entry.getValue();
-                    if (tickPrice > high) {
-                        high = tickPrice;
-                    }
-                    if (tickPrice < low) {
-                        low = tickPrice;
-                    }
-                }
-                double last5minCount = Math.floor(m_bars.get(m_bars.size() -1).m_time / (60 * 5));
-                double curr5minCount = Math.floor(time / (60*5));
-
-                if(curr5minCount > last5minCount) {
-                    // new 5 min during first init
-                    double p1, p2, mid;
-                    if (m_currentAskPrice > 0) {
-                        p1 = m_currentAskPrice;
-                    } else {
-                        p1 = m_currentBidPrice;
-                    }
-                    if(m_currentBidPrice > 0) {
-                        p2 = m_currentBidPrice;
-                    } else {
-                        p2 = m_currentAskPrice;
-                    }
-                    mid = (p1+ p2) / 2;
-
-                    m_bars.add(new Bar(time, mid, mid, mid, mid, -1, -1, -1));
-
-                }
-
-                Bar unfinishedBar = m_bars.get(m_bars.size() - 1);
-
-                unfinishedBar.m_close = (m_currentAskPrice + m_currentAskPrice) / 2;
-                unfinishedBar.m_high = high;
-                unfinishedBar.m_low = low;
-            }
-        }
-
+        this.handleNew5minBar(time);
         this.m_currentServerTime = time;
 
         // if 1st time, then set the string
         if(this.m_systemStartTimeString.length() == 0) {
             Date dd = new Date(time * 1000); // multiply by 1000 to convert seconds to millisecond
-            DateFormat format = new SimpleDateFormat("yyyyMMdd hh:mm:ss");  // yyyymmdd hh:mm:ss tmz
+            DateFormat format = new SimpleDateFormat("yyyyMMdd HH:mm:ss");  // yyyymmdd hh:mm:ss tmz
             this.m_systemStartTimeString = format.format(dd);
-            System.out.println("System time is: " + this.m_systemStartTimeString + " - " + this.m_currentServerTime);
+            System.out.println("m_systemStartTimeString (Local) is: " + this.m_systemStartTimeString + " - " + this.m_currentServerTime);
+
+
         }
     }
 
