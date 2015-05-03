@@ -47,7 +47,6 @@ public class DataHandler implements EWrapper{
         this.m_fiveMinBarRequestId = -1;
         this.m_marketDataRequestId = -1;
 
-
         // init member variable
         m_request = new Request(this);
 
@@ -63,7 +62,6 @@ public class DataHandler implements EWrapper{
         this.m_bars = new ArrayList<Bar>();
         this.m_fiveMinPrices = new ArrayList<Double>();;
         this.m_systemStartTimeString = "";
-
 
         m_request.eConnect(null, 7496, this.m_clientId);
 
@@ -89,6 +87,7 @@ public class DataHandler implements EWrapper{
         System.out.println("Request live data...");
         this.m_marketDataRequestId = this.m_reqId;
         List<TagValue> XYZ = new ArrayList<TagValue>();
+        this.m_request.reqMarketDataType(2);
         this.m_request.reqMktData(this.m_reqId++, this.m_contract, "233", false, XYZ);
     }
 
@@ -106,6 +105,7 @@ public class DataHandler implements EWrapper{
                 long lastBarTime = this.m_bars.get(this.m_bars.size() - 1).time();
                 Bar newBar = new Bar(lastBarTime + 5 * 60, midPrice, midPrice, midPrice, midPrice, -1, -1, -1);
                 this.m_bars.add(newBar);
+                this.m_fiveMinPrices.clear();
             }
 
         }
@@ -257,8 +257,9 @@ public class DataHandler implements EWrapper{
         // The next available order Id received from TWS upon connection.
         // Increment all successive orders by one based on this Id.
         this.m_nextValidOrderId = orderId;
+        this.m_reqId = orderId + 1000000; // let request id not colide with order id
         this.fetchContractData();
-        this.requestLiveData();
+
 
     }
 
@@ -342,6 +343,15 @@ public class DataHandler implements EWrapper{
 
                 System.out.println("time: " + b.m_time + " " + df.format(d) + " open: "+ f.format(b.open()) + " close: " + f.format(b.close()));
             }
+
+            ArrayList<Double> output = new ArrayList<Double>();
+            IFilter filter = new SuperSmootherFilter();
+            filter.filter(this.m_bars, output);
+            System.out.println("SuperSmootherFilter size is: " + output.size());
+            for(Double result: output) {
+                System.out.println(result);
+            }
+            this.requestLiveData();
         }
 
     }
