@@ -7,7 +7,7 @@ import java.util.ArrayList;
 /**
  * Created by nick on 5/3/15.
  */
-public class SuperSmootherFilter implements IFilter{
+public class SuperSmootherFilter extends IFilter{
 
     public int ssPeriod;
     public int minBarCount = 2;
