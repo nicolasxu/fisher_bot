@@ -53,7 +53,7 @@ public class FisherFilter extends IFilter{
                     if(nPrice < minL) minL = nPrice;
                 }
                 //Value1[i]=      0.5 * 2.0 * ((price - MinL)/(MaxH - MinL) - 0.5) + 0.5 * Value1[i+1];
-                double valueI = 0.5 * 0.2 * ((price - minL)/(maxH - minL) - 0.5) + 0.5 * midValues.get(i - 1);
+                double valueI = 0.5 * 2.0 * ((price - minL)/(maxH - minL) - 0.5) + 0.5 * midValues.get(i - 1);
 
                 if(valueI > 0.9999) valueI = 0.9999;
                 if(valueI < -0.9999) valueI = -0.9999;
@@ -79,11 +79,7 @@ public class FisherFilter extends IFilter{
                 } else {
                     outputTrigger.add(triggerI);
                 }
-
-
             }
-
-
         }
     }
     public FisherFilter() {
