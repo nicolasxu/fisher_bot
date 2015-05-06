@@ -26,6 +26,7 @@ public class DataHandler implements EWrapper{
     public long m_currentServerTime; // update with ever tick
     public int m_nextValidOrderId;
     public ArrayList<Bar> m_bars;
+    public ArrayList<Double> m_medians; // medians value for each bar, ( (high + low) / 2)
     public double m_currentBidPrice;
     public double m_currentAskPrice;
     public boolean m_newBidAskPrice;
@@ -33,6 +34,7 @@ public class DataHandler implements EWrapper{
     public int m_marketDataRequestId;
     public HashMap<Long, Double> m_temp5minTicks;
     public ArrayList<Double> m_fiveMinPrices;
+    public FisherBot m_fisherBot;
 
 
 
@@ -60,8 +62,11 @@ public class DataHandler implements EWrapper{
         this.m_contract.m_exchange = "IDEALPRO";
 
         this.m_bars = new ArrayList<Bar>();
+        this.m_medians = new ArrayList<Double>();
         this.m_fiveMinPrices = new ArrayList<Double>();;
         this.m_systemStartTimeString = "";
+
+        this.m_fisherBot = new FisherBot(this);
 
         m_request.eConnect(null, 7496, this.m_clientId);
 
@@ -71,7 +76,7 @@ public class DataHandler implements EWrapper{
     }
 
 
-    public void fetchContractData () {
+    public void fetchContractHistoricalData() {
         System.out.println("fetching data...");
         List<TagValue> XYZ = new ArrayList<TagValue>();
         this.m_fiveMinBarRequestId = this.m_reqId;
@@ -106,6 +111,9 @@ public class DataHandler implements EWrapper{
                 Bar newBar = new Bar(lastBarTime + 5 * 60, midPrice, midPrice, midPrice, midPrice, -1, -1, -1);
                 this.m_bars.add(newBar);
                 this.m_fiveMinPrices.clear();
+
+                this.m_fisherBot.calculate();
+                this.m_fisherBot.decide();
             }
 
         }
@@ -258,7 +266,7 @@ public class DataHandler implements EWrapper{
         // Increment all successive orders by one based on this Id.
         this.m_nextValidOrderId = orderId;
         this.m_reqId = orderId + 1000000; // let request id not colide with order id
-        this.fetchContractData();
+        this.fetchContractHistoricalData();
 
 
     }
@@ -326,8 +334,8 @@ public class DataHandler implements EWrapper{
 
         if(open != -1 && reqId == this.m_fiveMinBarRequestId) {
             // Bar( long time, double high, double low, double open, double close, double wap, long volume, int count)
-            long cstTime = Long.parseLong(date.trim());
-            Bar bar = new Bar(cstTime, high, low, open, close, -1, -1, -1);
+            long localTime = Long.parseLong(date.trim());
+            Bar bar = new Bar(localTime, high, low, open, close, -1, -1, -1);
 
             this.m_bars.add(bar);
         }
@@ -337,21 +345,21 @@ public class DataHandler implements EWrapper{
             DecimalFormat f = new DecimalFormat("0.00000");
             DateFormat df = new SimpleDateFormat("yyyyMMdd HH:mm:ss");  // yyyymmdd hh:mm:ss tmz
 
-            ArrayList<Double> smoothInput = new ArrayList<Double>();
+
             for(Bar b: m_bars) {
-                Date d = new Date(b.m_time * 1000);
-                double inputNumber = b.high() * 0.5 + b.low() * 0.5; ;
-                //smoothInput.add(inputNumber);
+
+                double inputNumber = b.high() * 0.5 + b.low() * 0.5;
+
+                // enable below line for live data:
+                m_medians.add(inputNumber);
 
                 // generate data for MT5
                 //System.out.println("ssTestPrice["+m_bars.indexOf(b)+"]= "+ f.format(inputNumber)   +";");
             }
 
-            ArrayList<Double> smoothed = new ArrayList<Double>();
 
-
-
-            /// data ///
+            /*
+            /// data (remove them for live usage) ///
 
             smoothInput.add(1.1219);
             smoothInput.add(1.12225);
@@ -658,10 +666,13 @@ public class DataHandler implements EWrapper{
             DecimalFormat f2 = new DecimalFormat("0.000000");
             System.out.println("below is fisher output");
             for(Double result: outputFisher) {
-                System.out.println(f2.format(result));
+
+                System.out.println( "outputFisher[" + outputFisher.indexOf(result) + "]:" + f2.format(result));
             }
 
-
+            */
+            this.m_fisherBot.calculate();
+            this.m_fisherBot.decide();
             this.requestLiveData();
         }
 
