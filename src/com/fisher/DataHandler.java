@@ -54,7 +54,7 @@ public class DataHandler implements EWrapper{
 
         this.m_temp5minTicks = new HashMap<Long, Double>();
 
-        // contract initlization
+        // contract initialization
         this.m_contract = new Contract();
         this.m_contract.m_symbol = "EUR";
         this.m_contract.m_secType = "CASH";
@@ -66,7 +66,7 @@ public class DataHandler implements EWrapper{
         this.m_fiveMinPrices = new ArrayList<Double>();;
         this.m_systemStartTimeString = "";
 
-        this.m_fisherBot = new FisherBot(this);
+        this.m_fisherBot = new FisherBot(this, this.m_medians);
 
         m_request.eConnect(null, 7496, this.m_clientId);
 
@@ -106,18 +106,26 @@ public class DataHandler implements EWrapper{
 
             if(current5minCount > prev5minCount) {
                 // new five min bar
-                double midPrice = this.findMidPrice();
+                double midPrice = this.findMidPrice(); // average between latest bid and ask price
                 long lastBarTime = this.m_bars.get(this.m_bars.size() - 1).time();
                 Bar newBar = new Bar(lastBarTime + 5 * 60, midPrice, midPrice, midPrice, midPrice, -1, -1, -1);
+
+                // TODO: add new mediens
+                this.m_medians.add(midPrice);
+
+                // Add new Bar
                 this.m_bars.add(newBar);
                 this.m_fiveMinPrices.clear();
 
+                // calculate
                 this.m_fisherBot.calculate();
+                // decide
                 this.m_fisherBot.decide();
+            } else {
+                // just calculate
+                this.m_fisherBot.calculate();
             }
-
         }
-
     }
 
     public double findMidPrice() {
@@ -166,6 +174,9 @@ public class DataHandler implements EWrapper{
         lastBar.m_high = high;
         lastBar.m_low = low;
         lastBar.m_close = mid;
+
+        // 5. update last m_medians
+        this.m_medians.set(lastIndex, (high + low) / 2 );
 
 
     }
