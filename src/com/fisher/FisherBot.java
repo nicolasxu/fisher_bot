@@ -32,13 +32,19 @@ public class FisherBot implements IBot {
         this.m_ssFilter = new SuperSmootherFilter();
         this.m_fisherFilter = new FisherFilter();
 
+        this.m_smoothed = new ArrayList<Double>();
+        this.m_fisher = new ArrayList<Double>();
+        this.m_trigger = new ArrayList<Double>();
+
     }
 
 
     public void calculate() {
 
         // go through all the filters
+
         this.m_ssFilter.filter(m_inputData, m_smoothed);
+
         this.m_fisherFilter.filter(m_smoothed, m_fisher, m_trigger);
 
     }
@@ -57,6 +63,8 @@ public class FisherBot implements IBot {
 
             // review 2015 May 6, 5 min data
 
+            System.out.println("fI > 1, fI: " + fI);
+
             if(fI > 0) {
                 if (fI < tI && fIm1 > tIm1) {
                     System.out.println("sell triggered");
@@ -71,6 +79,7 @@ public class FisherBot implements IBot {
         } else {
             // check the volatility (stand dev),
             // if volatile, we can still enter market
+            System.out.println("fI is: " + fI + " - do nothing");
         }
 
 

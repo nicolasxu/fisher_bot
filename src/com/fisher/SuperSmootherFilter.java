@@ -14,6 +14,8 @@ public class SuperSmootherFilter extends IFilter{
                                 // the input, no calculation.
 
     public void filter(ArrayList<Double> input, ArrayList<Double> output) {
+
+
         // input count should always equal output count
         double coeA = Math.pow(Math.E, -1.414*3.14159/this.ssPeriod);
         double coeB = 2 * coeA * Math.cos(1.414 * 180 / this.ssPeriod);

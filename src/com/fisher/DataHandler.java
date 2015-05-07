@@ -29,12 +29,15 @@ public class DataHandler implements EWrapper{
     public ArrayList<Double> m_medians; // medians value for each bar, ( (high + low) / 2)
     public double m_currentBidPrice;
     public double m_currentAskPrice;
-    public boolean m_newBidAskPrice;
+    public boolean m_newBidPrice;
+    public boolean m_newAskPrice;
+
     public int m_fiveMinBarRequestId;
     public int m_marketDataRequestId;
     public HashMap<Long, Double> m_temp5minTicks;
     public ArrayList<Double> m_fiveMinPrices;
     public FisherBot m_fisherBot;
+    public boolean m_newBarFlag;
 
 
 
@@ -43,7 +46,8 @@ public class DataHandler implements EWrapper{
         this.m_clientId = 1234;
         this.m_period = "5 mins";
         this.m_nextValidOrderId = -1;
-        this.m_newBidAskPrice = false;
+        this.m_newBidPrice = false;
+        this.m_newAskPrice = false;
         this.m_currentAskPrice = 0;
         this.m_currentBidPrice = 0;
         this.m_fiveMinBarRequestId = -1;
@@ -72,6 +76,8 @@ public class DataHandler implements EWrapper{
 
         m_request.reqCurrentTime(); // request server time first
 
+        this.m_newBarFlag = false;
+
 
     }
 
@@ -99,31 +105,100 @@ public class DataHandler implements EWrapper{
     public void handleNew5minBar(long time) {
         // if new bar, create one and append it to m_bars
 
-        if(this.m_newBidAskPrice) {
+        if(this.m_newBidPrice || this.m_newAskPrice) {
+
 
             double current5minCount =  Math.floor(time / (60 * 5));
             double prev5minCount = Math.floor(this.m_currentServerTime / (60 * 5));
 
             if(current5minCount > prev5minCount) {
-                // new five min bar
-                double midPrice = this.findMidPrice(); // average between latest bid and ask price
-                long lastBarTime = this.m_bars.get(this.m_bars.size() - 1).time();
-                Bar newBar = new Bar(lastBarTime + 5 * 60, midPrice, midPrice, midPrice, midPrice, -1, -1, -1);
 
-                // TODO: add new mediens
-                this.m_medians.add(midPrice);
+                // new bar, handle it when receive both bid and ask price
+                this.m_newBarFlag = true;
 
-                // Add new Bar
-                this.m_bars.add(newBar);
-                this.m_fiveMinPrices.clear();
+                if(this.m_newAskPrice && this.m_newBidPrice) {
 
-                // calculate
-                this.m_fisherBot.calculate();
-                // decide
-                this.m_fisherBot.decide();
+                    // new five min bar
+                    double midPrice = this.findMidPrice(); // average between latest bid and ask price
+                    long lastBarTime = this.m_bars.get(this.m_bars.size() - 1).time();
+                    Bar newBar = new Bar(lastBarTime + 5 * 60, midPrice, midPrice, midPrice, midPrice, -1, -1, -1);
+
+                    // Add new Bar
+                    this.m_bars.add(newBar);
+                    this.m_fiveMinPrices.clear();
+
+                    // create and add new mediens
+                    this.m_medians.add(midPrice);
+
+                    ////////// debug log msg ///////
+
+                    System.out.println("new bar!");
+                    Bar last2Bar = this.m_bars.get(m_bars.size() -2);
+
+                    String logMsg = last2Bar.m_time + " last bar - open: " + last2Bar.open();
+                    logMsg = logMsg + " close: " + last2Bar.close();
+                    logMsg = logMsg + " low: " + last2Bar.low();
+                    logMsg = logMsg + " high: " + last2Bar.high();
+                    System.out.println(logMsg);
+
+                    System.out.println("last bar median price: " + m_medians.get(m_medians.size() - 2));
+
+                    Bar currentBar = this.m_bars.get(m_bars.size() -1);
+                    String logMsg2 = currentBar.m_time + " current bar - open: " + currentBar.open();
+                    logMsg2 = logMsg2 + " close: " + currentBar.close();
+                    logMsg2 = logMsg2 + " low: " + currentBar.low();
+                    logMsg2 = logMsg2 + " high: " + currentBar.high();
+
+                    System.out.println(logMsg2);
+
+                    System.out.println("current median price: " + m_medians.get(m_medians.size() -1));
+
+                    //////// end of debug log msg //////
+
+                    // calculate
+                    this.m_fisherBot.calculate();
+                    // decide
+                    this.m_fisherBot.decide();
+
+                    // reset new price flag
+                    this.m_newBidPrice = false;
+                    this.m_newAskPrice = false;
+
+                    // update time server time, so that new bar branch won't be triggered next time
+                    this.m_currentServerTime = time;
+
+                } else {
+                    if(this.m_newBidPrice == false) {
+                        this.m_currentBidPrice = 0;
+                    }
+
+                    if (this.m_newAskPrice == false) {
+                        this.m_currentAskPrice = 0;
+                    }
+
+                }
+
+
             } else {
+
+                // update last bar, last median, no new bar or median creation
+                this.handleTickPrice();
+
                 // just calculate
                 this.m_fisherBot.calculate();
+
+                // reset the flag
+                if(this.m_newAskPrice == true) {
+                    this.m_newAskPrice = false;
+                }
+                if(this.m_newBidPrice == true) {
+                    this.m_newBidPrice = false;
+                }
+
+                // update time server time
+                this.m_currentServerTime = time;
+
+
             }
         }
     }
@@ -155,6 +230,8 @@ public class DataHandler implements EWrapper{
         // 2. add to temp price list
         this.m_fiveMinPrices.add(mid);
 
+
+
         // 3. find high and low
         double high = 0;
         double low = 10;
@@ -171,12 +248,19 @@ public class DataHandler implements EWrapper{
         // 4. update last bar
         int lastIndex = m_bars.size() - 1;
         Bar lastBar = m_bars.get(lastIndex);
-        lastBar.m_high = high;
-        lastBar.m_low = low;
+
+        if(high > lastBar.m_high) {
+            lastBar.m_high = high;
+        }
+
+        if(low < lastBar.m_low) {
+            lastBar.m_low = low;
+        }
+
         lastBar.m_close = mid;
 
         // 5. update last m_medians
-        this.m_medians.set(lastIndex, (high + low) / 2 );
+        this.m_medians.set(lastIndex, (lastBar.high() + lastBar.low()) / 2 );
 
 
     }
@@ -186,21 +270,25 @@ public class DataHandler implements EWrapper{
     public void tickPrice(int tickerId, int field, double price, int canAutoExecute) {
 
         String fieldDesc = TickType.getField(field);
+        System.out.println(fieldDesc + ": " + price);
 
         switch (field) {
             case 1:
                 // bid
                 this.m_currentBidPrice = price;
-                this.m_newBidAskPrice = true;
+                this.m_newBidPrice = true;
                 break;
             case 2:
                 // ask
                 this.m_currentAskPrice = price;
-                this.m_newBidAskPrice = true;
+                this.m_newAskPrice = true;
+                break;
+            default:
+
                 break;
         }
 
-        this.handleTickPrice();
+        //this.handleTickPrice();
 
         // price is handled in currentTime() handler
         this.m_request.reqCurrentTime();
@@ -355,7 +443,6 @@ public class DataHandler implements EWrapper{
             // request history data completed
             DecimalFormat f = new DecimalFormat("0.00000");
             DateFormat df = new SimpleDateFormat("yyyyMMdd HH:mm:ss");  // yyyymmdd hh:mm:ss tmz
-
 
             for(Bar b: m_bars) {
 
@@ -713,15 +800,19 @@ public class DataHandler implements EWrapper{
     public void currentTime(long time) {
 
         this.handleNew5minBar(time);
-        this.m_currentServerTime = time;
+
 
         // if 1st time, then set the string
         if(this.m_systemStartTimeString.length() == 0) {
+
+            this.m_currentServerTime = time;
+
             Date dd = new Date(time * 1000); // multiply by 1000 to convert seconds to millisecond
             DateFormat format = new SimpleDateFormat("yyyyMMdd HH:mm:ss");  // yyyymmdd hh:mm:ss tmz
             this.m_systemStartTimeString = format.format(dd);
             System.out.println("m_systemStartTimeString (Local) is: " + this.m_systemStartTimeString + " - " + this.m_currentServerTime);
 
+            // TODO, bug here, first bar will have high low price bug, need to copy high low price to m_tempFiveMinPrice
 
         }
     }
