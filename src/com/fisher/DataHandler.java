@@ -270,7 +270,7 @@ public class DataHandler implements EWrapper{
     public void tickPrice(int tickerId, int field, double price, int canAutoExecute) {
 
         String fieldDesc = TickType.getField(field);
-        System.out.println(fieldDesc + ": " + price);
+        //System.out.println(fieldDesc + ": " + price);
 
         switch (field) {
             case 1:

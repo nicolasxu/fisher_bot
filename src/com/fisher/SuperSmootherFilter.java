@@ -23,6 +23,8 @@ public class SuperSmootherFilter extends IFilter{
         double coeC3 = - coeA * coeA;
         double coeC1 = 1 - coeC2 - coeC3;
 
+
+
         for(int i = Math.max(0, output.size() - 1); i < input.size(); i ++) {
 
             if(i < minBarCount) {
@@ -43,6 +45,8 @@ public class SuperSmootherFilter extends IFilter{
                 }
             }
         }
+        //double latestValue = output.get(output.size() - 1);
+        //System.out.println("SuperSmoother latest value: " + latestValue);
     }
     public SuperSmootherFilter() {
         this.ssPeriod = 1;

@@ -68,10 +68,12 @@ public class FisherBot implements IBot {
             if(fI > 0) {
                 if (fI < tI && fIm1 > tIm1) {
                     System.out.println("sell triggered");
+                    System.out.println("fI: " + fI + " tI: "+ tI + " fIm1: " + fIm1 + " tIm1 " + tIm1);
                 }
             } else {
                 if (fI > tI && fIm1 < tIm1) {
                     System.out.println("buy triggered");
+                    System.out.println("fI: " + fI + " tI: "+ tI + " fIm1: " + fIm1 + " tIm1 " + tIm1);
                 }
             }
 
@@ -79,7 +81,7 @@ public class FisherBot implements IBot {
         } else {
             // check the volatility (stand dev),
             // if volatile, we can still enter market
-            System.out.println("fI is: " + fI + " - do nothing");
+            System.out.println("fI < 1: " + fI + " - do nothing");
         }
 
 

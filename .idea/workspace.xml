@@ -2,12 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="09d32302-5fbd-4b19-b5c3-191d54f4a892" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/fisher_bot/com/fisher/DataHandler.class" afterPath="$PROJECT_DIR$/out/production/fisher_bot/com/fisher/DataHandler.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/fisher_bot/com/fisher/FisherBot.class" afterPath="$PROJECT_DIR$/out/production/fisher_bot/com/fisher/FisherBot.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/fisher/DataHandler.java" afterPath="$PROJECT_DIR$/src/com/fisher/DataHandler.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/fisher/FisherBot.java" afterPath="$PROJECT_DIR$/src/com/fisher/FisherBot.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/fisher/FisherFilter.java" afterPath="$PROJECT_DIR$/src/com/fisher/FisherFilter.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/fisher/SuperSmootherFilter.java" afterPath="$PROJECT_DIR$/src/com/fisher/SuperSmootherFilter.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="fisher_bot.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -39,28 +37,28 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DataHandler.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="DataHandler.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/fisher/DataHandler.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.17027417">
-              <caret line="273" column="0" selection-start-line="273" selection-start-column="0" selection-end-line="273" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="134" column="51" selection-start-line="134" selection-start-column="51" selection-end-line="134" selection-end-column="51" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#3213#3223#0" expanded="true" />
-                <element signature="e#28207#28208#0" expanded="true" />
-                <element signature="e#28280#28281#0" expanded="true" />
-                <element signature="e#28331#28332#0" expanded="true" />
-                <element signature="e#28392#28393#0" expanded="true" />
+                <element signature="e#28209#28210#0" expanded="true" />
+                <element signature="e#28282#28283#0" expanded="true" />
+                <element signature="e#28333#28334#0" expanded="true" />
+                <element signature="e#28394#28395#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="IBot.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="IBot.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/fisher/IBot.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="5" column="17" selection-start-line="5" selection-start-column="17" selection-end-line="5" selection-end-column="17" />
+            <state vertical-scroll-proportion="0.32085562">
+              <caret line="8" column="1" selection-start-line="8" selection-start-column="1" selection-end-line="8" selection-end-column="1" />
               <folding />
             </state>
           </provider>
@@ -70,7 +68,7 @@
         <entry file="file://$PROJECT_DIR$/src/com/fisher/FisherBot.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="60" column="30" selection-start-line="60" selection-start-column="30" selection-end-line="60" selection-end-column="30" />
+              <caret line="66" column="0" selection-start-line="66" selection-start-column="0" selection-end-line="66" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -94,7 +92,7 @@
         <entry file="file://$PROJECT_DIR$/src/com/fisher/FisherFilter.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="22" column="32" selection-start-line="22" selection-start-column="32" selection-end-line="22" selection-end-column="32" />
+              <caret line="96" column="10" selection-start-line="96" selection-start-column="10" selection-end-line="96" selection-end-column="10" />
               <folding />
             </state>
           </provider>
@@ -104,7 +102,7 @@
         <entry file="file://$PROJECT_DIR$/src/com/fisher/SuperSmootherFilter.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="16" column="0" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
+              <caret line="47" column="37" selection-start-line="47" selection-start-column="31" selection-end-line="47" selection-end-column="37" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -194,10 +192,10 @@
         <option value="$PROJECT_DIR$/src/com/ib/controller/Bar.java" />
         <option value="$PROJECT_DIR$/src/com/fisher/IBot.java" />
         <option value="$PROJECT_DIR$/src/com/fisher/IFilter.java" />
+        <option value="$PROJECT_DIR$/src/com/fisher/DataHandler.java" />
         <option value="$PROJECT_DIR$/src/com/fisher/FisherFilter.java" />
         <option value="$PROJECT_DIR$/src/com/fisher/SuperSmootherFilter.java" />
         <option value="$PROJECT_DIR$/src/com/fisher/FisherBot.java" />
-        <option value="$PROJECT_DIR$/src/com/fisher/DataHandler.java" />
       </list>
     </option>
   </component>
@@ -633,7 +631,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1434" height="813" extended-state="0" />
+    <frame x="0" y="23" width="1434" height="813" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -644,7 +642,7 @@
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39908257" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.44244105" sideWeight="0.40804598" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32871014" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3259362" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -653,7 +651,7 @@
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.26077586" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.40915394" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.44244105" sideWeight="0.59195405" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -705,10 +703,10 @@
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#3213#3223#0" expanded="true" />
-            <element signature="e#28207#28208#0" expanded="true" />
-            <element signature="e#28280#28281#0" expanded="true" />
-            <element signature="e#28331#28332#0" expanded="true" />
-            <element signature="e#28392#28393#0" expanded="true" />
+            <element signature="e#28209#28210#0" expanded="true" />
+            <element signature="e#28282#28283#0" expanded="true" />
+            <element signature="e#28333#28334#0" expanded="true" />
+            <element signature="e#28394#28395#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -826,10 +824,10 @@
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#3213#3223#0" expanded="true" />
-            <element signature="e#28207#28208#0" expanded="true" />
-            <element signature="e#28280#28281#0" expanded="true" />
-            <element signature="e#28331#28332#0" expanded="true" />
-            <element signature="e#28392#28393#0" expanded="true" />
+            <element signature="e#28209#28210#0" expanded="true" />
+            <element signature="e#28282#28283#0" expanded="true" />
+            <element signature="e#28333#28334#0" expanded="true" />
+            <element signature="e#28394#28395#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -857,10 +855,10 @@
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#3213#3223#0" expanded="true" />
-            <element signature="e#28207#28208#0" expanded="true" />
-            <element signature="e#28280#28281#0" expanded="true" />
-            <element signature="e#28331#28332#0" expanded="true" />
-            <element signature="e#28392#28393#0" expanded="true" />
+            <element signature="e#28209#28210#0" expanded="true" />
+            <element signature="e#28282#28283#0" expanded="true" />
+            <element signature="e#28333#28334#0" expanded="true" />
+            <element signature="e#28394#28395#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -888,10 +886,10 @@
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#3213#3223#0" expanded="true" />
-            <element signature="e#28207#28208#0" expanded="true" />
-            <element signature="e#28280#28281#0" expanded="true" />
-            <element signature="e#28331#28332#0" expanded="true" />
-            <element signature="e#28392#28393#0" expanded="true" />
+            <element signature="e#28209#28210#0" expanded="true" />
+            <element signature="e#28282#28283#0" expanded="true" />
+            <element signature="e#28333#28334#0" expanded="true" />
+            <element signature="e#28394#28395#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -926,10 +924,10 @@
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#3213#3223#0" expanded="true" />
-            <element signature="e#28207#28208#0" expanded="true" />
-            <element signature="e#28280#28281#0" expanded="true" />
-            <element signature="e#28331#28332#0" expanded="true" />
-            <element signature="e#28392#28393#0" expanded="true" />
+            <element signature="e#28209#28210#0" expanded="true" />
+            <element signature="e#28282#28283#0" expanded="true" />
+            <element signature="e#28333#28334#0" expanded="true" />
+            <element signature="e#28394#28395#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -964,10 +962,10 @@
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#3213#3223#0" expanded="true" />
-            <element signature="e#28207#28208#0" expanded="true" />
-            <element signature="e#28280#28281#0" expanded="true" />
-            <element signature="e#28331#28332#0" expanded="true" />
-            <element signature="e#28392#28393#0" expanded="true" />
+            <element signature="e#28209#28210#0" expanded="true" />
+            <element signature="e#28282#28283#0" expanded="true" />
+            <element signature="e#28333#28334#0" expanded="true" />
+            <element signature="e#28394#28395#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -987,10 +985,10 @@
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#3213#3223#0" expanded="true" />
-            <element signature="e#28207#28208#0" expanded="true" />
-            <element signature="e#28280#28281#0" expanded="true" />
-            <element signature="e#28331#28332#0" expanded="true" />
-            <element signature="e#28392#28393#0" expanded="true" />
+            <element signature="e#28209#28210#0" expanded="true" />
+            <element signature="e#28282#28283#0" expanded="true" />
+            <element signature="e#28333#28334#0" expanded="true" />
+            <element signature="e#28394#28395#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1050,14 +1048,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/fisher/IBot.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="5" column="17" selection-start-line="5" selection-start-column="17" selection-end-line="5" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/fisher/IFilter.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -1101,28 +1091,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/fisher/SuperSmootherFilter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="16" column="0" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/fisher/FisherFilter.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="22" column="32" selection-start-line="22" selection-start-column="32" selection-end-line="22" selection-end-column="32" />
+          <caret line="96" column="10" selection-start-line="96" selection-start-column="10" selection-end-line="96" selection-end-column="10" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/fisher/FisherBot.java">
+    <entry file="file://$PROJECT_DIR$/src/com/fisher/SuperSmootherFilter.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="60" column="30" selection-start-line="60" selection-start-column="30" selection-end-line="60" selection-end-column="30" />
+          <caret line="47" column="37" selection-start-line="47" selection-start-column="31" selection-end-line="47" selection-end-column="37" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -1131,16 +1111,34 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/fisher/DataHandler.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.17027417">
-          <caret line="273" column="0" selection-start-line="273" selection-start-column="0" selection-end-line="273" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="134" column="51" selection-start-line="134" selection-start-column="51" selection-end-line="134" selection-end-column="51" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#3213#3223#0" expanded="true" />
-            <element signature="e#28207#28208#0" expanded="true" />
-            <element signature="e#28280#28281#0" expanded="true" />
-            <element signature="e#28331#28332#0" expanded="true" />
-            <element signature="e#28392#28393#0" expanded="true" />
+            <element signature="e#28209#28210#0" expanded="true" />
+            <element signature="e#28282#28283#0" expanded="true" />
+            <element signature="e#28333#28334#0" expanded="true" />
+            <element signature="e#28394#28395#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/fisher/FisherBot.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="66" column="0" selection-start-line="66" selection-start-column="0" selection-end-line="66" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/fisher/IBot.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.32085562">
+          <caret line="8" column="1" selection-start-line="8" selection-start-column="1" selection-end-line="8" selection-end-column="1" />
+          <folding />
         </state>
       </provider>
     </entry>

@@ -12,6 +12,7 @@ public class FisherFilter extends IFilter{
     public void filter(ArrayList<Double> input, ArrayList<Double> outputFisher,
                        ArrayList<Double> outputTrigger) {
 
+
         for(int i = Math.max(0, outputFisher.size() - 1); i < input.size(); i ++) {
 
             if ( i < this.period) {
@@ -89,6 +90,13 @@ public class FisherFilter extends IFilter{
                 }
             }
         }
+        double latestInput = input.get(input.size() - 1);
+        //System.out.println("latest fisher input value: " + latestInput);
+        //double latestFisher  = outputFisher.get(outputFisher.size() - 1 );
+        //double latestTrigger = outputTrigger.get(outputTrigger.size()  - 1);
+        //System.out.println("Fisher latest: " + latestFisher + " Trigger latest: " + latestTrigger);
+
+
     }
     public FisherFilter() {
         this.period = 10;
