@@ -3,6 +3,7 @@ package com.fisher;
 import com.ib.client.*;
 import com.ib.controller.Bar;
 
+import javax.swing.*;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -38,6 +39,7 @@ public class DataHandler implements EWrapper{
     public ArrayList<Double> m_fiveMinPrices;
     public FisherBot m_fisherBot;
     public boolean m_newBarFlag;
+    public JFrame m_appFrame;
 
 
 
@@ -79,6 +81,10 @@ public class DataHandler implements EWrapper{
         this.m_newBarFlag = false;
 
 
+    }
+
+    public void setOutsideFrame (JFrame theFrame) {
+        this.m_appFrame = theFrame;
     }
 
 

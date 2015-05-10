@@ -4,6 +4,12 @@
 
 package com.fisher;
 
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartFrame;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.data.general.DefaultPieDataset;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -16,9 +22,36 @@ import javax.swing.border.*;
 public class mainFrame extends JFrame {
 
     public DataHandler handler;
+    public DefaultPieDataset data;
+    public JFreeChart chart;
+    public ChartPanel chartPanel;
+
+    private JScrollPane plotScrollPane;
+
+
+
     public mainFrame() {
         initComponents();
         this.stopButton.setEnabled(false);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        // data
+        this.data = new DefaultPieDataset();
+        data.setValue("Category 1", 43.2);
+        data.setValue("Category 2", 27.9);
+        data.setValue("Category 3", 79.5);
+
+        // chart
+        this.chart = ChartFactory.createPieChart("Sample Pie Chart", data, true, true, false);
+        this.chartPanel = new ChartPanel(this.chart);
+        this.plotScrollPane = new JScrollPane();
+        this.plotScrollPane.add(chartPanel);
+        this.plotScrollPane.setViewportView(chartPanel);
+
+        Container pane = this.getContentPane();
+        pane.add(this.plotScrollPane, BorderLayout.SOUTH);
+
+
     }
 
     private void startButtonActionPerformed(ActionEvent e) {
@@ -45,7 +78,8 @@ public class mainFrame extends JFrame {
         // Generated using JFormDesigner Evaluation license - nick xu
         dialogPane = new JPanel();
         contentPanel = new JPanel();
-        textField1 = new JTextField();
+        scrollPaneLogArea = new JScrollPane();
+        logArea = new JTextArea();
         buttonBar = new JPanel();
         startButton = new JButton();
         stopButton = new JButton();
@@ -71,18 +105,22 @@ public class mainFrame extends JFrame {
             //======== contentPanel ========
             {
 
-                //---- textField1 ----
-                textField1.setEditable(false);
+                //======== scrollPaneLogArea ========
+                {
+                    scrollPaneLogArea.setViewportView(logArea);
+                }
 
                 GroupLayout contentPanelLayout = new GroupLayout(contentPanel);
                 contentPanel.setLayout(contentPanelLayout);
                 contentPanelLayout.setHorizontalGroup(
                     contentPanelLayout.createParallelGroup()
-                        .addComponent(textField1, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 609, Short.MAX_VALUE)
+                        .addComponent(scrollPaneLogArea, GroupLayout.DEFAULT_SIZE, 609, Short.MAX_VALUE)
                 );
                 contentPanelLayout.setVerticalGroup(
                     contentPanelLayout.createParallelGroup()
-                        .addComponent(textField1, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 296, Short.MAX_VALUE)
+                        .addGroup(contentPanelLayout.createSequentialGroup()
+                            .addComponent(scrollPaneLogArea, GroupLayout.PREFERRED_SIZE, 225, GroupLayout.PREFERRED_SIZE)
+                            .addGap(0, 406, Short.MAX_VALUE))
                 );
             }
             dialogPane.add(contentPanel, BorderLayout.CENTER);
@@ -130,7 +168,8 @@ public class mainFrame extends JFrame {
     // Generated using JFormDesigner Evaluation license - nick xu
     private JPanel dialogPane;
     private JPanel contentPanel;
-    private JTextField textField1;
+    private JScrollPane scrollPaneLogArea;
+    private JTextArea logArea;
     private JPanel buttonBar;
     private JButton startButton;
     private JButton stopButton;
