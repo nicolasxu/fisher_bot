@@ -3,7 +3,6 @@ package com.fisher;
 import com.ib.client.*;
 import com.ib.controller.Bar;
 
-import javax.swing.*;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -39,7 +38,7 @@ public class DataHandler implements EWrapper{
     public ArrayList<Double> m_fiveMinPrices;
     public FisherBot m_fisherBot;
     public boolean m_newBarFlag;
-    public JFrame m_appFrame;
+    public BotDataPlotter m_appPlotter;
 
 
 
@@ -69,7 +68,7 @@ public class DataHandler implements EWrapper{
 
         this.m_bars = new ArrayList<Bar>();
         this.m_medians = new ArrayList<Double>();
-        this.m_fiveMinPrices = new ArrayList<Double>();;
+        this.m_fiveMinPrices = new ArrayList<Double>();
         this.m_systemStartTimeString = "";
 
         this.m_fisherBot = new FisherBot(this, this.m_medians);
@@ -80,11 +79,10 @@ public class DataHandler implements EWrapper{
 
         this.m_newBarFlag = false;
 
-
     }
 
-    public void setOutsideFrame (JFrame theFrame) {
-        this.m_appFrame = theFrame;
+    public void setPlotter(BotDataPlotter plotter) {
+        this.m_appPlotter = plotter;
     }
 
 
@@ -775,8 +773,16 @@ public class DataHandler implements EWrapper{
             }
 
             */
+
             this.m_fisherBot.calculate();
             this.m_fisherBot.decide();
+
+            // bind data to plotter
+            this.m_appPlotter.setBarSource(this.m_bars);
+            this.m_appPlotter.setFisherSource(m_fisherBot.m_fisher);
+            this.m_appPlotter.setTriggerSource(m_fisherBot.m_trigger);
+            this.m_appPlotter.updatePlotData();
+
             this.requestLiveData();
         }
 

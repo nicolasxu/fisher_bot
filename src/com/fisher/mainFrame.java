@@ -4,8 +4,6 @@
 
 package com.fisher;
 
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartFrame;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.general.DefaultPieDataset;
@@ -25,8 +23,10 @@ public class mainFrame extends JFrame {
     public DefaultPieDataset data;
     public JFreeChart chart;
     public ChartPanel chartPanel;
+    public BotDataPlotter plotter;
 
     private JScrollPane plotScrollPane;
+
 
 
 
@@ -35,14 +35,9 @@ public class mainFrame extends JFrame {
         this.stopButton.setEnabled(false);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // data
-        this.data = new DefaultPieDataset();
-        data.setValue("Category 1", 43.2);
-        data.setValue("Category 2", 27.9);
-        data.setValue("Category 3", 79.5);
-
         // chart
-        this.chart = ChartFactory.createPieChart("Sample Pie Chart", data, true, true, false);
+        this.plotter = new BotDataPlotter();
+        this.chart = plotter.createChart();
         this.chartPanel = new ChartPanel(this.chart);
         this.plotScrollPane = new JScrollPane();
         this.plotScrollPane.add(chartPanel);
@@ -58,6 +53,7 @@ public class mainFrame extends JFrame {
         // TODO add your code here
         System.out.println("starting the application");
         this.handler = new DataHandler(); // kick start the connection in the DataHandler constructor
+        this.handler.setPlotter(this.plotter);
         this.startButton.setEnabled(false);
         this.stopButton.setEnabled(true);
     }
