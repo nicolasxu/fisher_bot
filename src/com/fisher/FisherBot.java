@@ -47,6 +47,7 @@ public class FisherBot implements IBot {
 
         this.m_fisherFilter.filter(m_smoothed, m_fisher, m_trigger);
 
+
     }
     public void decide() {
         double fI, tI; // latest fisher[i], trigger[i]

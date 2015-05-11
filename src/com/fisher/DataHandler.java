@@ -120,19 +120,20 @@ public class DataHandler implements EWrapper{
                 // new bar, handle it when receive both bid and ask price
                 this.m_newBarFlag = true;
 
-                if(this.m_newAskPrice && this.m_newBidPrice) {
+                if(this.m_newAskPrice || this.m_newBidPrice) {
 
                     // new five min bar
-                    double midPrice = this.findMidPrice(); // average between latest bid and ask price
+
                     long lastBarTime = this.m_bars.get(this.m_bars.size() - 1).time();
-                    Bar newBar = new Bar(lastBarTime + 5 * 60, midPrice, midPrice, midPrice, midPrice, -1, -1, -1);
+                    double lastClosePrice = this.m_bars.get(this.m_bars.size() - 1).close(); // new open equals last close
+                    Bar newBar = new Bar(lastBarTime + 5 * 60, lastClosePrice, lastClosePrice, lastClosePrice, lastClosePrice, -1, -1, -1);
 
                     // Add new Bar
                     this.m_bars.add(newBar);
                     this.m_fiveMinPrices.clear();
 
                     // create and add new mediens
-                    this.m_medians.add(midPrice);
+                    this.m_medians.add(lastClosePrice);
 
                     ////////// debug log msg ///////
 
@@ -264,7 +265,7 @@ public class DataHandler implements EWrapper{
         lastBar.m_close = mid;
 
         // 5. update last m_medians
-        this.m_medians.set(lastIndex, (lastBar.high() + lastBar.low()) / 2 );
+        this.m_medians.set(lastIndex, lastBar.close() );
 
 
     }
@@ -450,10 +451,8 @@ public class DataHandler implements EWrapper{
 
             for(Bar b: m_bars) {
 
-                double inputNumber = b.high() * 0.5 + b.low() * 0.5;
-
                 // enable below line for live data:
-                m_medians.add(inputNumber);
+                m_medians.add(b.close());
 
                 // generate data for MT5
                 //System.out.println("ssTestPrice["+m_bars.indexOf(b)+"]= "+ f.format(inputNumber)   +";");

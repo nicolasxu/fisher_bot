@@ -78,6 +78,7 @@ public class BotDataPlotter {
     }
 
     public void updatePlotData () {
+
         // always re-draw the last one
         // 1. convert data from reference to drawing data
 
