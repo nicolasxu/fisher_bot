@@ -39,6 +39,7 @@ public class DataHandler implements EWrapper{
     public FisherBot m_fisherBot;
     public boolean m_newBarFlag;
     public BotDataPlotter m_appPlotter;
+    public ILogger m_logger;
 
 
 
@@ -85,9 +86,13 @@ public class DataHandler implements EWrapper{
         this.m_appPlotter = plotter;
     }
 
+    public void setLogger(ILogger logger) {
+        this.m_logger = logger;
+    }
+
 
     public void fetchContractHistoricalData() {
-        System.out.println("fetching data...");
+        this.m_logger.log("fetching data...");
         List<TagValue> XYZ = new ArrayList<TagValue>();
         this.m_fiveMinBarRequestId = this.m_reqId;
         this.m_request.reqHistoricalData(this.m_reqId++,
@@ -99,7 +104,7 @@ public class DataHandler implements EWrapper{
     }
 
     public void requestLiveData () {
-        System.out.println("Request live data...");
+        this.m_logger.log("Request live data...");
         this.m_marketDataRequestId = this.m_reqId;
         List<TagValue> XYZ = new ArrayList<TagValue>();
         this.m_request.reqMarketDataType(2);
@@ -172,6 +177,9 @@ public class DataHandler implements EWrapper{
                     // update time server time, so that new bar branch won't be triggered next time
                     this.m_currentServerTime = time;
 
+                    // update plot data for new bar
+                    this.m_appPlotter.updatePlotData();
+
                 } else {
                     if(this.m_newBidPrice == false) {
                         this.m_currentBidPrice = 0;
@@ -230,7 +238,7 @@ public class DataHandler implements EWrapper{
         // always put data to last m_bars
 
         // 1. find the mid price
-        double mid = this.findMidPrice();
+        double mid = this.findMidPrice(); // from the current bid and ask price, not from bar high and low price
 
         // 2. add to temp price list
         this.m_fiveMinPrices.add(mid);
@@ -293,7 +301,7 @@ public class DataHandler implements EWrapper{
                 break;
         }
 
-        //this.handleTickPrice();
+
 
         // price is handled in currentTime() handler
         this.m_request.reqCurrentTime();
@@ -314,13 +322,13 @@ public class DataHandler implements EWrapper{
 
     @Override
     public void tickGeneric(int tickerId, int tickType, double value) {
-        System.out.println("tickGeneric() -" +" type: "+tickType + " value: " + value);
+        this.m_logger.log("tickGeneric() -" + " type: " + tickType + " value: " + value);
     }
 
     @Override
     public void tickString(int tickerId, int tickType, String value) {
         TickType.getField(tickType);
-        System.out.println("tickString() - " + "type: " + tickType + " value: " + value);
+        this.m_logger.log("tickString() - " + "type: " + tickType + " value: " + value);
     }
 
     @Override
@@ -821,9 +829,7 @@ public class DataHandler implements EWrapper{
             Date dd = new Date(time * 1000); // multiply by 1000 to convert seconds to millisecond
             DateFormat format = new SimpleDateFormat("yyyyMMdd HH:mm:ss");  // yyyymmdd hh:mm:ss tmz
             this.m_systemStartTimeString = format.format(dd);
-            System.out.println("m_systemStartTimeString (Local) is: " + this.m_systemStartTimeString + " - " + this.m_currentServerTime);
-
-            // TODO, bug here, first bar will have high low price bug, need to copy high low price to m_tempFiveMinPrice
+            this.m_logger.log("m_systemStartTimeString (Local) is: " + this.m_systemStartTimeString + " - " + this.m_currentServerTime);
 
         }
     }
@@ -905,7 +911,7 @@ public class DataHandler implements EWrapper{
 
     @Override
     public void error(int id, int errorCode, String errorMsg) {
-        System.out.println("error(int id, int errorCode, String errorMsg): "+errorMsg);
+        this.m_logger.log("error(int id, int errorCode, String errorMsg): "+errorMsg);
     }
 
     @Override

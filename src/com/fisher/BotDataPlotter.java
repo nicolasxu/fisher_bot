@@ -78,29 +78,12 @@ public class BotDataPlotter {
     }
 
     public void updatePlotData () {
-
+        System.out.println("updatePlotData() called...");
         // always re-draw the last one
         // 1. convert data from reference to drawing data
+        this.purgeDrawingData();
 
-        // remove the last m_ohlcSeries data
-        if(m_ohlcSeries.getItemCount() > 0) {
-            m_ohlcSeries.remove(m_ohlcSeries.getItemCount() - 1);
-
-        }
-
-        // remove the last m_fisherSeries data
-        if(m_fisherSeries.getItemCount() > 0) {
-            int index = m_fisherSeries.getItemCount() - 1;
-            m_fisherSeries.delete(index, index); // last one
-        }
-
-        // even no need to redraw trigger
-        if(m_triggerSeries.getItemCount() > 0) {
-            int index = m_triggerSeries.getItemCount() - 1;
-            m_triggerSeries.delete(index, index); // last one
-        }
-
-        for(int i = Math.max(m_ohlcSeries.getItemCount() - 1, 0)  ; i < m_bars.size(); i++) {
+        for(int i = Math.max(m_ohlcSeries.getItemCount() , 0)  ; i < m_bars.size(); i++) {
 
             Bar currentBar = m_bars.get(i);
             Minute theMinute = new Minute(new Date(currentBar.m_time*1000));
@@ -112,7 +95,9 @@ public class BotDataPlotter {
                     currentBar.m_low,
                     currentBar.m_close );
 
+
             this.m_ohlcSeries.add(item);
+
             m_fisherSeries.add(theMinute, m_fishers.get(i));
             m_triggerSeries.add(theMinute, m_triggers.get(i));
 

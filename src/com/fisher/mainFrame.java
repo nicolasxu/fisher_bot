@@ -27,6 +27,8 @@ public class mainFrame extends JFrame {
 
     private JScrollPane plotScrollPane;
 
+    public TextAreaLogger logger;
+
 
 
 
@@ -46,23 +48,30 @@ public class mainFrame extends JFrame {
         Container pane = this.getContentPane();
         pane.add(this.plotScrollPane, BorderLayout.SOUTH);
 
+        this.logger = new TextAreaLogger(logArea);
+
 
     }
 
     private void startButtonActionPerformed(ActionEvent e) {
         // TODO add your code here
-        System.out.println("starting the application");
+        this.logger.log("starting the application");
         this.handler = new DataHandler(); // kick start the connection in the DataHandler constructor
         this.handler.setPlotter(this.plotter);
+        this.handler.setLogger(logger);
+        this.plotter.purgeDrawingData();
         this.startButton.setEnabled(false);
         this.stopButton.setEnabled(true);
+
+
     }
 
     private void stopButtonActionPerformed(ActionEvent e) {
         // TODO add your code here
         this.handler.m_request.eDisconnect();
-        System.out.println("Disconnected...");
+        this.logger.log("Disconnected...");
         this.handler = null;
+
         this.stopButton.setEnabled(false);
         this.startButton.setEnabled(true);
     }
@@ -110,7 +119,7 @@ public class mainFrame extends JFrame {
                 contentPanel.setLayout(contentPanelLayout);
                 contentPanelLayout.setHorizontalGroup(
                     contentPanelLayout.createParallelGroup()
-                        .addComponent(scrollPaneLogArea, GroupLayout.DEFAULT_SIZE, 609, Short.MAX_VALUE)
+                        .addComponent(scrollPaneLogArea, GroupLayout.DEFAULT_SIZE, 699, Short.MAX_VALUE)
                 );
                 contentPanelLayout.setVerticalGroup(
                     contentPanelLayout.createParallelGroup()
