@@ -41,9 +41,14 @@ public class DataHandler implements EWrapper{
     public BotDataPlotter m_appPlotter;
     public ILogger m_logger;
 
+    public boolean testBuyOrderSent = false;
 
 
-    public DataHandler() {
+
+    public DataHandler(ILogger logger) {
+
+        this.m_logger = logger;
+
         this.m_reqId = 1; // increase one after each request
         this.m_clientId = 1234;
         this.m_period = "5 mins";
@@ -72,7 +77,7 @@ public class DataHandler implements EWrapper{
         this.m_fiveMinPrices = new ArrayList<Double>();
         this.m_systemStartTimeString = "";
 
-        this.m_fisherBot = new FisherBot(this, this.m_medians);
+        this.m_fisherBot = new FisherBot(this, this.m_medians, logger);
 
         m_request.eConnect(null, 7496, this.m_clientId);
 
@@ -86,9 +91,6 @@ public class DataHandler implements EWrapper{
         this.m_appPlotter = plotter;
     }
 
-    public void setLogger(ILogger logger) {
-        this.m_logger = logger;
-    }
 
 
     public void fetchContractHistoricalData() {
@@ -109,6 +111,8 @@ public class DataHandler implements EWrapper{
         List<TagValue> XYZ = new ArrayList<TagValue>();
         this.m_request.reqMarketDataType(2);
         this.m_request.reqMktData(this.m_reqId++, this.m_contract, "233", false, XYZ);
+
+
     }
 
     public void handleNew5minBar(long time) {
@@ -295,6 +299,15 @@ public class DataHandler implements EWrapper{
                 // ask
                 this.m_currentAskPrice = price;
                 this.m_newAskPrice = true;
+
+                //// test ////
+                if(testBuyOrderSent == false) {
+                    this.m_fisherBot.buy();
+                    testBuyOrderSent = true;
+                }
+                ///  end of test ///
+
+
                 break;
             default:
 
@@ -374,6 +387,7 @@ public class DataHandler implements EWrapper{
     @Override
     public void nextValidId(int orderId) {
 
+        this.m_logger.log("next valid orderId: " + orderId);
         // The next available order Id received from TWS upon connection.
         // Increment all successive orders by one based on this Id.
         this.m_nextValidOrderId = orderId;
@@ -911,7 +925,7 @@ public class DataHandler implements EWrapper{
 
     @Override
     public void error(int id, int errorCode, String errorMsg) {
-        this.m_logger.log("error(int id, int errorCode, String errorMsg): "+errorMsg);
+        this.m_logger.log("error(int id, int errorCode, String errorMsg): " + errorMsg);
     }
 
     @Override

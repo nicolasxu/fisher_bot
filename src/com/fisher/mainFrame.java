@@ -56,9 +56,9 @@ public class mainFrame extends JFrame {
     private void startButtonActionPerformed(ActionEvent e) {
         // TODO add your code here
         this.logger.log("starting the application");
-        this.handler = new DataHandler(); // kick start the connection in the DataHandler constructor
+        this.handler = new DataHandler(logger); // kick start the connection in the DataHandler constructor
         this.handler.setPlotter(this.plotter);
-        this.handler.setLogger(logger);
+
         this.plotter.purgeDrawingData();
         this.startButton.setEnabled(false);
         this.stopButton.setEnabled(true);

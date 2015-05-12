@@ -25,9 +25,16 @@ public class FisherBot implements IBot {
     public ArrayList<Double> m_fisher;  // fisher transform result
     public ArrayList<Double> m_trigger; // fisher transform trigger
 
-    public FisherBot(DataHandler handler, ArrayList<Double> inputData) {
+    public int m_initialLotSize;
+    public int m_currentLotSize;
+    public double m_profitPoint;
+
+    public ILogger logger;
+
+    public FisherBot(DataHandler handler, ArrayList<Double> inputData, ILogger logger) {
         this.m_dataHandler = handler;
         this.m_inputData = inputData;
+        this.logger = logger;
 
         this.m_ssFilter = new SuperSmootherFilter();
         this.m_fisherFilter = new FisherFilter();
@@ -36,8 +43,48 @@ public class FisherBot implements IBot {
         this.m_fisher = new ArrayList<Double>();
         this.m_trigger = new ArrayList<Double>();
 
+        this.logger = handler.m_logger;
+
+        this.m_initialLotSize = 100000; // 100k, 1 lot
+        this.m_currentLotSize = this.m_initialLotSize;
+        this.m_profitPoint = 50 * 0.00001;
     }
 
+    public void buy() {
+
+        Order parentOrder = new Order();
+        parentOrder.m_orderId    = this.m_dataHandler.m_nextValidOrderId++;
+        parentOrder.m_action     = "BUY";
+        parentOrder.m_orderType  = "LMT";
+        parentOrder.m_transmit   = true;
+        parentOrder.m_lmtPrice   = this.m_dataHandler.m_currentAskPrice;
+        logger.log("current ask price: " + this.m_dataHandler.m_currentAskPrice);
+        logger.log("parentOrder.m_orderId: " + parentOrder.m_orderId);
+        parentOrder.m_totalQuantity = m_currentLotSize;
+
+
+        Order takeProfitOrder = new Order();
+        takeProfitOrder.m_orderId = this.m_dataHandler.m_nextValidOrderId++;
+        takeProfitOrder.m_action  = "SELL";
+        takeProfitOrder.m_orderType = "LMT";
+        takeProfitOrder.m_transmit  = true;
+        takeProfitOrder.m_lmtPrice  = this.m_dataHandler.m_currentAskPrice + this.m_profitPoint;
+        takeProfitOrder.m_parentId  = parentOrder.m_orderId;
+        takeProfitOrder.m_totalQuantity = m_currentLotSize;
+
+        m_dataHandler.m_request.placeOrder(this.m_dataHandler.m_reqId++, this.m_dataHandler.m_contract, parentOrder);
+        m_dataHandler.m_request.placeOrder(this.m_dataHandler.m_reqId, this.m_dataHandler.m_contract, takeProfitOrder);
+
+
+    }
+
+    public void sell() {
+
+    }
+
+    public void closeAllPosition() {
+
+    }
 
     public void calculate() {
 
