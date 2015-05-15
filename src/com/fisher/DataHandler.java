@@ -42,6 +42,7 @@ public class DataHandler implements EWrapper{
     public ILogger m_logger;
 
     public boolean testBuyOrderSent = false;
+    public boolean testSellOrderSent = false;
 
 
 
@@ -111,6 +112,7 @@ public class DataHandler implements EWrapper{
         List<TagValue> XYZ = new ArrayList<TagValue>();
         this.m_request.reqMarketDataType(2);
         this.m_request.reqMktData(this.m_reqId++, this.m_contract, "233", false, XYZ);
+        this.m_request.reqPositions();
 
 
     }
@@ -294,18 +296,17 @@ public class DataHandler implements EWrapper{
                 // bid
                 this.m_currentBidPrice = price;
                 this.m_newBidPrice = true;
+
+
+
+
                 break;
             case 2:
                 // ask
                 this.m_currentAskPrice = price;
                 this.m_newAskPrice = true;
 
-                //// test ////
-                if(testBuyOrderSent == false) {
-                    this.m_fisherBot.buy();
-                    testBuyOrderSent = true;
-                }
-                ///  end of test ///
+
 
 
                 break;
@@ -356,7 +357,8 @@ public class DataHandler implements EWrapper{
 
     @Override
     public void openOrder(int orderId, Contract contract, Order order, OrderState orderState) {
-
+        this.m_logger.log("openOrder(), orderId: " + orderId + " orderStatus.m_status: " + orderState.m_status);
+        this.m_logger.log("order.m_orderId: " + order.m_orderId);
     }
 
     @Override
@@ -390,9 +392,10 @@ public class DataHandler implements EWrapper{
         this.m_logger.log("next valid orderId: " + orderId);
         // The next available order Id received from TWS upon connection.
         // Increment all successive orders by one based on this Id.
-        this.m_nextValidOrderId = orderId;
-        this.m_reqId = orderId + 1000000; // let request id not colide with order id
+        this.m_nextValidOrderId = orderId + 1000;
+        this.m_reqId = orderId; // let request id not colide with order id
         this.fetchContractHistoricalData();
+        this.m_request.reqOpenOrders();
 
 
     }
@@ -875,6 +878,7 @@ public class DataHandler implements EWrapper{
 
     @Override
     public void position(String account, Contract contract, int pos, double avgCost) {
+        this.m_logger.log("position is: " + pos);
 
     }
 

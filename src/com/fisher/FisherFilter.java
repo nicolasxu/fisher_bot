@@ -99,7 +99,7 @@ public class FisherFilter extends IFilter{
 
     }
     public FisherFilter() {
-        this.period = 10;
+        this.period = 5;
         this.midValues = new ArrayList<Double>();
     }
 
