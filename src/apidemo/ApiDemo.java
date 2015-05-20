@@ -67,7 +67,7 @@ public class ApiDemo implements IConnectionHandler {
 	
 	private void run() {
 		m_tabbedPanel.addTab( "Connection", m_connectionPanel);
-		m_tabbedPanel.addTab( "Market Data", m_mktDataPanel);
+		m_tabbedPanel.addTab( "Market DataTank", m_mktDataPanel);
 		m_tabbedPanel.addTab( "Trading", m_tradingPanel);
 		m_tabbedPanel.addTab( "Account Info", m_acctInfoPanel);
 		m_tabbedPanel.addTab( "Options", m_optionsPanel);

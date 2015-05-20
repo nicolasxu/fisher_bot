@@ -80,6 +80,7 @@ public class FisherFilter extends IFilter{
                 } else {
                     outputFisher.add(fisherI);
                 }
+                //System.out.println("Fisher result: " + fisherI);
 
                 // write trigger
                 double triggerI = outputFisher.get(i - 1);
@@ -99,7 +100,7 @@ public class FisherFilter extends IFilter{
 
     }
     public FisherFilter() {
-        this.period = 5;
+        this.period = 15;
         this.midValues = new ArrayList<Double>();
     }
 

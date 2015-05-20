@@ -123,7 +123,7 @@ public class ComboPanel extends JPanel implements INewTab {
 				}
 			};
 
-			HtmlButton mktData = new HtmlButton( "Request Market Data") {
+			HtmlButton mktData = new HtmlButton( "Request Market DataTank") {
 				@Override protected void actionPerformed() {
 					onReqMktData();
 				}
@@ -161,7 +161,7 @@ public class ComboPanel extends JPanel implements INewTab {
 			horzPanel.add( m_dnPanel);
 
 			JScrollPane mktDataScroll = new JScrollPane( m_mktDataTable);
-			mktDataScroll.setBorder( new TitledBorder( "Combo Market Data"));
+			mktDataScroll.setBorder( new TitledBorder( "Combo Market DataTank"));
 
 			setLayout( new BorderLayout() );
 			add( horzPanel, BorderLayout.NORTH);
@@ -346,7 +346,7 @@ public class ComboPanel extends JPanel implements INewTab {
 				}
 			};
 
-			HtmlButton mktData = new HtmlButton( "Request Market Data") {
+			HtmlButton mktData = new HtmlButton( "Request Market DataTank") {
 				@Override protected void actionPerformed() {
 					onReqMktData();
 				}
@@ -382,7 +382,7 @@ public class ComboPanel extends JPanel implements INewTab {
 
 			JTable efpTable = new JTable( m_efpModel);
 			JScrollPane efpScroll = new JScrollPane( efpTable);
-			efpScroll.setBorder( new TitledBorder( "EFP Market Data"));
+			efpScroll.setBorder( new TitledBorder( "EFP Market DataTank"));
 
 			setLayout( new BorderLayout() );
 			add( horzPanel, BorderLayout.NORTH);

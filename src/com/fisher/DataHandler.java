@@ -14,7 +14,7 @@ import java.lang.Math;
  */
 public class DataHandler implements EWrapper{
 
-    Request m_request;      // instance of child of EClientSocket Connection
+    EClientSocket m_request;      // instance of child of EClientSocket Connection
                             // for connect to TWS, request data, and place order
     public int m_clientId;  // the unique number that identify this program
 
@@ -48,6 +48,7 @@ public class DataHandler implements EWrapper{
 
     public DataHandler(ILogger logger) {
 
+        logger.log("DataHandler() called...");
         this.m_logger = logger;
 
         this.m_reqId = 1; // increase one after each request
@@ -92,6 +93,13 @@ public class DataHandler implements EWrapper{
         this.m_appPlotter = plotter;
     }
 
+    public String toTimeString (long time) {
+
+        Date dd = new Date(time * 1000); // multiply by 1000 to convert seconds to millisecond
+        DateFormat format = new SimpleDateFormat("yyyyMMdd HH:mm:ss");  // yyyymmdd hh:mm:ss tmz
+        return format.format(dd);
+
+    }
 
 
     public void fetchContractHistoricalData() {
@@ -99,7 +107,7 @@ public class DataHandler implements EWrapper{
         List<TagValue> XYZ = new ArrayList<TagValue>();
         this.m_fiveMinBarRequestId = this.m_reqId;
         this.m_request.reqHistoricalData(this.m_reqId++,
-                this.m_contract, this.m_systemStartTimeString + " EST", "2 D",
+                this.m_contract, this.m_systemStartTimeString, "2 D",
                 "5 mins", "MIDPOINT", 0, 2, XYZ);
 
         // no need to create one, if current time is unfinished 5 min bar, then the last bar is the current unfinished one
@@ -206,6 +214,9 @@ public class DataHandler implements EWrapper{
                 // just calculate
                 this.m_fisherBot.calculate();
 
+                // then decide also
+                this.m_fisherBot.decide();
+
                 // reset the flag
                 if(this.m_newAskPrice == true) {
                     this.m_newAskPrice = false;
@@ -297,6 +308,12 @@ public class DataHandler implements EWrapper{
                 this.m_currentBidPrice = price;
                 this.m_newBidPrice = true;
 
+                /*
+                if(testSellOrderSent == false) {
+                    this.m_fisherBot.sell();
+                    this.testSellOrderSent = true;
+                }
+                */
 
 
 
@@ -306,7 +323,12 @@ public class DataHandler implements EWrapper{
                 this.m_currentAskPrice = price;
                 this.m_newAskPrice = true;
 
-
+                /*
+                if(testBuyOrderSent == false) {
+                    this.m_fisherBot.buy();
+                    this.testBuyOrderSent = true;
+                }
+                */
 
 
                 break;
@@ -484,320 +506,6 @@ public class DataHandler implements EWrapper{
             }
 
 
-            /*
-            /// data (remove them for live usage) ///
-
-            smoothInput.add(1.1219);
-            smoothInput.add(1.12225);
-            smoothInput.add(1.12234);
-            smoothInput.add(1.1221);
-            smoothInput.add(1.12181);
-            smoothInput.add(1.12156);
-            smoothInput.add(1.12147);
-            smoothInput.add(1.12134);
-            smoothInput.add(1.12138);
-            smoothInput.add(1.12166);
-            smoothInput.add(1.12142);
-            smoothInput.add(1.12132);
-            smoothInput.add(1.1211);
-            smoothInput.add(1.12113);
-            smoothInput.add(1.12154);
-            smoothInput.add(1.12177);
-            smoothInput.add(1.12164);
-            smoothInput.add(1.12126);
-            smoothInput.add(1.12105);
-            smoothInput.add(1.12116);
-            smoothInput.add(1.1213);
-            smoothInput.add(1.1212);
-            smoothInput.add(1.12138);
-            smoothInput.add(1.12146);
-            smoothInput.add(1.12145);
-            smoothInput.add(1.12145);
-            smoothInput.add(1.12145);
-            smoothInput.add(1.12135);
-            smoothInput.add(1.12129);
-            smoothInput.add(1.1215);
-            smoothInput.add(1.12147);
-            smoothInput.add(1.12147);
-            smoothInput.add(1.12131);
-            smoothInput.add(1.12099);
-            smoothInput.add(1.12138);
-            smoothInput.add(1.12166);
-            smoothInput.add(1.12135);
-            smoothInput.add(1.12135);
-            smoothInput.add(1.12135);
-            smoothInput.add(1.12109);
-            smoothInput.add(1.12099);
-            smoothInput.add(1.12086);
-            smoothInput.add(1.12111);
-            smoothInput.add(1.1213);
-            smoothInput.add(1.12101);
-            smoothInput.add(1.12084);
-            smoothInput.add(1.12102);
-            smoothInput.add(1.12106);
-            smoothInput.add(1.12114);
-            smoothInput.add(1.12116);
-            smoothInput.add(1.12115);
-            smoothInput.add(1.12132);
-            smoothInput.add(1.1214);
-            smoothInput.add(1.12126);
-            smoothInput.add(1.1214);
-            smoothInput.add(1.1214);
-            smoothInput.add(1.12105);
-            smoothInput.add(1.12098);
-            smoothInput.add(1.12121);
-            smoothInput.add(1.121);
-            smoothInput.add(1.1206);
-            smoothInput.add(1.12054);
-            smoothInput.add(1.1206);
-            smoothInput.add(1.12074);
-            smoothInput.add(1.12055);
-            smoothInput.add(1.1206);
-            smoothInput.add(1.12082);
-            smoothInput.add(1.12078);
-            smoothInput.add(1.12072);
-            smoothInput.add(1.12078);
-            smoothInput.add(1.12072);
-            smoothInput.add(1.12087);
-            smoothInput.add(1.12102);
-            smoothInput.add(1.12092);
-            smoothInput.add(1.12089);
-            smoothInput.add(1.12092);
-            smoothInput.add(1.12104);
-            smoothInput.add(1.12101);
-            smoothInput.add(1.12092);
-            smoothInput.add(1.12099);
-            smoothInput.add(1.1209);
-            smoothInput.add(1.12089);
-            smoothInput.add(1.12102);
-            smoothInput.add(1.12102);
-            smoothInput.add(1.12095);
-            smoothInput.add(1.12084);
-            smoothInput.add(1.12072);
-            smoothInput.add(1.12062);
-            smoothInput.add(1.12062);
-            smoothInput.add(1.12072);
-            smoothInput.add(1.12092);
-            smoothInput.add(1.12092);
-            smoothInput.add(1.1208);
-            smoothInput.add(1.12078);
-            smoothInput.add(1.12098);
-            smoothInput.add(1.12095);
-            smoothInput.add(1.12095);
-            smoothInput.add(1.12085);
-            smoothInput.add(1.12082);
-            smoothInput.add(1.1211);
-            smoothInput.add(1.12119);
-            smoothInput.add(1.12112);
-            smoothInput.add(1.12112);
-            smoothInput.add(1.12136);
-            smoothInput.add(1.12173);
-            smoothInput.add(1.12217);
-            smoothInput.add(1.12138);
-            smoothInput.add(1.12052);
-            smoothInput.add(1.12122);
-            smoothInput.add(1.12169);
-            smoothInput.add(1.12219);
-            smoothInput.add(1.12175);
-            smoothInput.add(1.12211);
-            smoothInput.add(1.1221);
-            smoothInput.add(1.12278);
-            smoothInput.add(1.12406);
-            smoothInput.add(1.1246);
-            smoothInput.add(1.1241);
-            smoothInput.add(1.12403);
-            smoothInput.add(1.12381);
-            smoothInput.add(1.12501);
-            smoothInput.add(1.12474);
-            smoothInput.add(1.12456);
-            smoothInput.add(1.12396);
-            smoothInput.add(1.12443);
-            smoothInput.add(1.12519);
-            smoothInput.add(1.12464);
-            smoothInput.add(1.12555);
-            smoothInput.add(1.126);
-            smoothInput.add(1.12635);
-            smoothInput.add(1.12567);
-            smoothInput.add(1.12575);
-            smoothInput.add(1.12525);
-            smoothInput.add(1.12501);
-            smoothInput.add(1.12455);
-            smoothInput.add(1.12472);
-            smoothInput.add(1.12562);
-            smoothInput.add(1.12544);
-            smoothInput.add(1.12504);
-            smoothInput.add(1.12528);
-            smoothInput.add(1.12595);
-            smoothInput.add(1.1255);
-            smoothInput.add(1.12567);
-            smoothInput.add(1.12623);
-            smoothInput.add(1.12766);
-            smoothInput.add(1.1271);
-            smoothInput.add(1.12635);
-            smoothInput.add(1.12492);
-            smoothInput.add(1.12385);
-            smoothInput.add(1.1238);
-            smoothInput.add(1.12396);
-            smoothInput.add(1.12419);
-            smoothInput.add(1.12412);
-            smoothInput.add(1.12385);
-            smoothInput.add(1.12426);
-            smoothInput.add(1.12384);
-            smoothInput.add(1.12367);
-            smoothInput.add(1.12385);
-            smoothInput.add(1.12452);
-            smoothInput.add(1.1251);
-            smoothInput.add(1.12596);
-            smoothInput.add(1.12645);
-            smoothInput.add(1.12665);
-            smoothInput.add(1.1268);
-            smoothInput.add(1.12669);
-            smoothInput.add(1.12668);
-            smoothInput.add(1.127);
-            smoothInput.add(1.12731);
-            smoothInput.add(1.1275);
-            smoothInput.add(1.12748);
-            smoothInput.add(1.12692);
-            smoothInput.add(1.12666);
-            smoothInput.add(1.12677);
-            smoothInput.add(1.12729);
-            smoothInput.add(1.12715);
-            smoothInput.add(1.12679);
-            smoothInput.add(1.1265);
-            smoothInput.add(1.12581);
-            smoothInput.add(1.1257);
-            smoothInput.add(1.12538);
-            smoothInput.add(1.12628);
-            smoothInput.add(1.12686);
-            smoothInput.add(1.1269);
-            smoothInput.add(1.12628);
-            smoothInput.add(1.12615);
-            smoothInput.add(1.12575);
-            smoothInput.add(1.12502);
-            smoothInput.add(1.12555);
-            smoothInput.add(1.12573);
-            smoothInput.add(1.12582);
-            smoothInput.add(1.12608);
-            smoothInput.add(1.12621);
-            smoothInput.add(1.12584);
-            smoothInput.add(1.1261);
-            smoothInput.add(1.12553);
-            smoothInput.add(1.1258);
-            smoothInput.add(1.1251);
-            smoothInput.add(1.12505);
-            smoothInput.add(1.1252);
-            smoothInput.add(1.1256);
-            smoothInput.add(1.1269);
-            smoothInput.add(1.12606);
-            smoothInput.add(1.12338);
-            smoothInput.add(1.12344);
-            smoothInput.add(1.12207);
-            smoothInput.add(1.1218);
-            smoothInput.add(1.1219);
-            smoothInput.add(1.1218);
-            smoothInput.add(1.12176);
-            smoothInput.add(1.1227);
-            smoothInput.add(1.12245);
-            smoothInput.add(1.12193);
-            smoothInput.add(1.12233);
-            smoothInput.add(1.12195);
-            smoothInput.add(1.12113);
-            smoothInput.add(1.1207);
-            smoothInput.add(1.12011);
-            smoothInput.add(1.11908);
-            smoothInput.add(1.11986);
-            smoothInput.add(1.1202);
-            smoothInput.add(1.12);
-            smoothInput.add(1.11996);
-            smoothInput.add(1.11974);
-            smoothInput.add(1.11969);
-            smoothInput.add(1.11972);
-            smoothInput.add(1.1192);
-            smoothInput.add(1.1187);
-            smoothInput.add(1.11889);
-            smoothInput.add(1.11879);
-            smoothInput.add(1.11894);
-            smoothInput.add(1.11961);
-            smoothInput.add(1.12049);
-            smoothInput.add(1.11999);
-            smoothInput.add(1.11976);
-            smoothInput.add(1.11904);
-            smoothInput.add(1.11837);
-            smoothInput.add(1.1181);
-            smoothInput.add(1.11819);
-            smoothInput.add(1.1188);
-            smoothInput.add(1.11859);
-            smoothInput.add(1.11872);
-            smoothInput.add(1.11895);
-            smoothInput.add(1.11929);
-            smoothInput.add(1.11966);
-            smoothInput.add(1.11945);
-            smoothInput.add(1.11919);
-            smoothInput.add(1.11914);
-            smoothInput.add(1.11929);
-            smoothInput.add(1.1196);
-            smoothInput.add(1.11975);
-            smoothInput.add(1.11998);
-            smoothInput.add(1.11993);
-            smoothInput.add(1.11957);
-            smoothInput.add(1.11938);
-            smoothInput.add(1.11987);
-            smoothInput.add(1.11976);
-            smoothInput.add(1.11954);
-            smoothInput.add(1.11909);
-            smoothInput.add(1.11871);
-            smoothInput.add(1.11869);
-            smoothInput.add(1.11882);
-            smoothInput.add(1.11947);
-            smoothInput.add(1.11978);
-            smoothInput.add(1.11965);
-            smoothInput.add(1.11985);
-            smoothInput.add(1.1198);
-            smoothInput.add(1.11994);
-            smoothInput.add(1.11999);
-            smoothInput.add(1.12074);
-            smoothInput.add(1.12159);
-            smoothInput.add(1.12115);
-            smoothInput.add(1.12106);
-            smoothInput.add(1.12105);
-            smoothInput.add(1.12116);
-            smoothInput.add(1.12156);
-            smoothInput.add(1.12154);
-            smoothInput.add(1.1216);
-            smoothInput.add(1.12135);
-            smoothInput.add(1.12095);
-            smoothInput.add(1.12072);
-            smoothInput.add(1.12062);
-            smoothInput.add(1.12039);
-            smoothInput.add(1.1203);
-            smoothInput.add(1.11976);
-            smoothInput.add(1.11972);
-
-
-
-            /// data ///
-
-            IFilter ssfilter = new SuperSmootherFilter();
-            ssfilter.filter(smoothInput, smoothed);
-            System.out.println("SuperSmootherFilter size is: " + smoothed.size() + ", below is smoothed data ");
-            for(Double result: smoothed) {
-                System.out.println(f.format(result));
-            }
-            ArrayList<Double> outputFisher = new ArrayList<Double>();
-            ArrayList<Double> outputTrigger = new ArrayList<Double>();
-
-            FisherFilter fisherFilter = new FisherFilter();
-            fisherFilter.filter(smoothed, outputFisher, outputTrigger);
-
-            DecimalFormat f2 = new DecimalFormat("0.000000");
-            System.out.println("below is fisher output");
-            for(Double result: outputFisher) {
-
-                System.out.println( "outputFisher[" + outputFisher.indexOf(result) + "]:" + f2.format(result));
-            }
-
-            */
-
             this.m_fisherBot.calculate();
             this.m_fisherBot.decide();
 
@@ -840,12 +548,8 @@ public class DataHandler implements EWrapper{
 
         // if 1st time, then set the string
         if(this.m_systemStartTimeString.length() == 0) {
-
             this.m_currentServerTime = time;
-
-            Date dd = new Date(time * 1000); // multiply by 1000 to convert seconds to millisecond
-            DateFormat format = new SimpleDateFormat("yyyyMMdd HH:mm:ss");  // yyyymmdd hh:mm:ss tmz
-            this.m_systemStartTimeString = format.format(dd);
+            this.m_systemStartTimeString = this.toTimeString(time);
             this.m_logger.log("m_systemStartTimeString (Local) is: " + this.m_systemStartTimeString + " - " + this.m_currentServerTime);
 
         }
@@ -878,7 +582,10 @@ public class DataHandler implements EWrapper{
 
     @Override
     public void position(String account, Contract contract, int pos, double avgCost) {
-        this.m_logger.log("position is: " + pos);
+        if(contract.m_symbol.compareTo("EUR") == 0) {
+            this.m_logger.log("position is: " + pos + " for contract: " + contract.m_symbol);
+        }
+
 
     }
 

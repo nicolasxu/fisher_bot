@@ -35,7 +35,7 @@ public class BotDataPlotter {
           1. received bar from DataHandler
           2. Fisher and Trigger data from FisherBot
        and then plot data on ChartPanel which is attached to a JFrame.
-       Data conversion is done in side of this class
+       DataTank conversion is done in side of this class
     */
 
     // outside data reference

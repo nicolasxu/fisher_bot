@@ -55,9 +55,9 @@ public class MarketDataPanel extends JPanel {
 	private TopResultsPanel m_topResultPanel;
 	
 	MarketDataPanel() {
-		m_requestPanel.addTab( "Top Market Data", new TopRequestPanel() );
+		m_requestPanel.addTab( "Top Market DataTank", new TopRequestPanel() );
 		m_requestPanel.addTab( "Deep Book", new DeepRequestPanel() );
-		m_requestPanel.addTab( "Historical Data", new HistRequestPanel() );
+		m_requestPanel.addTab( "Historical DataTank", new HistRequestPanel() );
 		m_requestPanel.addTab( "Real-time Bars", new RealtimeRequestPanel() );
 		m_requestPanel.addTab( "Market Scanner", new ScannerRequestPanel() );
 		
@@ -70,7 +70,7 @@ public class MarketDataPanel extends JPanel {
 		final ContractPanel m_contractPanel = new ContractPanel(m_contract);
 		
 		TopRequestPanel() {
-			HtmlButton reqTop = new HtmlButton( "Request Top Market Data") {
+			HtmlButton reqTop = new HtmlButton( "Request Top Market DataTank") {
 				@Override protected void actionPerformed() {
 					onTop();
 				}
@@ -89,7 +89,7 @@ public class MarketDataPanel extends JPanel {
 			m_contractPanel.onOK();
 			if (m_topResultPanel == null) {
 				m_topResultPanel = new TopResultsPanel();
-				m_resultsPanel.addTab( "Top Data", m_topResultPanel, true, true);
+				m_resultsPanel.addTab( "Top DataTank", m_topResultPanel, true, true);
 			}
 			
 			m_topResultPanel.m_model.addRow( m_contract);
@@ -149,7 +149,7 @@ public class MarketDataPanel extends JPanel {
 		final ContractPanel m_contractPanel = new ContractPanel(m_contract);
 		
 		DeepRequestPanel() {
-			HtmlButton reqDeep = new HtmlButton( "Request Deep Market Data") {
+			HtmlButton reqDeep = new HtmlButton( "Request Deep Market DataTank") {
 				@Override protected void actionPerformed() {
 					onDeep();
 				}

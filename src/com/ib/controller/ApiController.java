@@ -368,7 +368,7 @@ public class ApiController implements EWrapper {
 		recEOM();
 	}
 
-	// ---------------------------------------- Top Market Data handling ----------------------------------------
+	// ---------------------------------------- Top Market DataTank handling ----------------------------------------
 	public interface ITopMktDataHandler {
 		void tickPrice(NewTickType tickType, double price, int canAutoExecute);
 		void tickSize(NewTickType tickType, int size);
@@ -504,7 +504,7 @@ public class ApiController implements EWrapper {
 	}
 
 
-	// ---------------------------------------- Deep Market Data handling ----------------------------------------
+	// ---------------------------------------- Deep Market DataTank handling ----------------------------------------
 	public interface IDeepMktDataHandler {
 		void updateMktDepth(int position, String marketMaker, DeepType operation, DeepSide side, double price, int size);
 	}
