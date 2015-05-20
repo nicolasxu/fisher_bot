@@ -113,8 +113,7 @@ public class FisherBot implements IBot {
         stopLossOrder.m_totalQuantity = m_currentLotSize;
         m_dataHandler.m_request.placeOrder(m_dataHandler.m_reqId++, m_dataHandler.m_contract, stopLossOrder);
 
-
-
+        // TODO: reset the order quantity if it is more than the initial quantity
 
     }
 
@@ -160,6 +159,8 @@ public class FisherBot implements IBot {
         stopLossOrder.m_totalQuantity = m_currentLotSize;
         m_dataHandler.m_request.placeOrder(m_dataHandler.m_reqId++, m_dataHandler.m_contract, stopLossOrder);
 
+        // TODO: reset the order quantity if it is more than the initial quantity
+
     }
 
     public void closeAllPosition() {
@@ -184,10 +185,13 @@ public class FisherBot implements IBot {
             if(tempLow < m_lowest) {
                 m_lowest = tempLow;
             }
-
         }
+    }
 
-
+    public void updateStopLossExecutionCount() {
+        //this.m_dataHandler.m_orderStates
+        // 1. check if stoploss get more
+        // 2. if increased, then reset the quantity for next order based on the current quantity
     }
 
 

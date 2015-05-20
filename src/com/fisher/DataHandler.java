@@ -3,6 +3,7 @@ package com.fisher;
 import com.ib.client.*;
 import com.ib.controller.Bar;
 
+import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -44,6 +45,11 @@ public class DataHandler implements EWrapper{
     public boolean testBuyOrderSent = false;
     public boolean testSellOrderSent = false;
 
+    public HashMap<Integer, Order> m_orders;
+    public HashMap<Integer, OrderState> m_orderStates;
+    public ArrayList<Double> m_stopLossOrderIds;
+
+
 
 
     public DataHandler(ILogger logger) {
@@ -77,6 +83,10 @@ public class DataHandler implements EWrapper{
         this.m_bars = new ArrayList<Bar>();
         this.m_medians = new ArrayList<Double>();
         this.m_fiveMinPrices = new ArrayList<Double>();
+        this.m_orders = new HashMap<Integer, Order>();
+        this.m_orderStates = new HashMap<Integer, OrderState>();
+        this.m_stopLossOrderIds = new ArrayList<Double>();
+
         this.m_systemStartTimeString = "";
 
         this.m_fisherBot = new FisherBot(this, this.m_medians, logger);
@@ -323,12 +333,12 @@ public class DataHandler implements EWrapper{
                 this.m_currentAskPrice = price;
                 this.m_newAskPrice = true;
 
-                /*
+
                 if(testBuyOrderSent == false) {
                     this.m_fisherBot.buy();
                     this.testBuyOrderSent = true;
                 }
-                */
+
 
 
                 break;
@@ -374,13 +384,20 @@ public class DataHandler implements EWrapper{
 
     @Override
     public void orderStatus(int orderId, String status, int filled, int remaining, double avgFillPrice, int permId, int parentId, double lastFillPrice, int clientId, String whyHeld) {
-
+        //this.m_logger.log("OrderId: "+ orderId + " Status: " + status + " ParentId: " + parentId);
     }
 
     @Override
     public void openOrder(int orderId, Contract contract, Order order, OrderState orderState) {
         this.m_logger.log("openOrder(), orderId: " + orderId + " orderStatus.m_status: " + orderState.m_status);
         this.m_logger.log("order.m_orderId: " + order.m_orderId);
+        this.m_orderStates.put(orderId, orderState);
+        this.m_orders.put(orderId, order);
+        // update execution count
+        this.m_fisherBot.updateStopLossExecutionCount();
+
+        System.out.println("m_orderStates.size(): " + m_orderStates.size());
+        System.out.println("m_orders.size(): " + m_orders.size());
     }
 
     @Override

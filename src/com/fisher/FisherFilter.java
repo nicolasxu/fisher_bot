@@ -12,7 +12,6 @@ public class FisherFilter extends IFilter{
     public void filter(ArrayList<Double> input, ArrayList<Double> outputFisher,
                        ArrayList<Double> outputTrigger) {
 
-
         for(int i = Math.max(0, outputFisher.size() - 1); i < input.size(); i ++) {
 
             if ( i < this.period) {
