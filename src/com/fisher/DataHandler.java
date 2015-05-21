@@ -334,10 +334,10 @@ public class DataHandler implements EWrapper{
                 this.m_newAskPrice = true;
 
 
-                if(testBuyOrderSent == false) {
-                    this.m_fisherBot.buy();
-                    this.testBuyOrderSent = true;
-                }
+//                if(testBuyOrderSent == false) {
+//                    this.m_fisherBot.buy();
+//                    this.testBuyOrderSent = true;
+//                }
 
 
 
@@ -389,8 +389,9 @@ public class DataHandler implements EWrapper{
 
     @Override
     public void openOrder(int orderId, Contract contract, Order order, OrderState orderState) {
-        this.m_logger.log("openOrder(), orderId: " + orderId + " orderStatus.m_status: " + orderState.m_status);
-        this.m_logger.log("order.m_orderId: " + order.m_orderId);
+        this.m_logger.log("openOrder(), orderId: " + orderId + " orderStatus.m_status: " + orderState.m_status + " order.m_orderId: " + order.m_orderId);
+
+
         this.m_orderStates.put(orderId, orderState);
         this.m_orders.put(orderId, order);
         // update execution count
