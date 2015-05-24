@@ -21,10 +21,12 @@ public class FisherBot implements IBot {
 
     public SuperSmootherFilter m_ssFilter;
     public FisherFilter m_fisherFilter;
+    public StdFilter m_stdFilter;
 
     // array list of result data
     public ArrayList<Double> m_fisher;  // fisher transform result
     public ArrayList<Double> m_trigger; // fisher transform trigger
+    public ArrayList<Double> m_standDeviations;
 
     public int m_initialLotSize;
     public int m_currentLotSize;
@@ -51,15 +53,19 @@ public class FisherBot implements IBot {
         this.logger = logger;
         this.m_inputBars = bars;
 
+        // init filters
         this.m_ssFilter = new SuperSmootherFilter(1);
         this.m_fisherFilter = new FisherFilter(8);
+        this.m_stdFilter = new StdFilter(8);
 
+        // init value
         this.m_smoothed = new ArrayList<Double>();
         this.m_fisher = new ArrayList<Double>();
         this.m_trigger = new ArrayList<Double>();
         this.m_opens = new ArrayList<Double>();
         this.m_closes = new ArrayList<Double>();
         this.m_medians = new ArrayList<Double>();
+        this.m_standDeviations = new ArrayList<Double>();
 
         this.m_stopLossOrderTriggered = new HashMap<Integer, Boolean>();
         this.m_orderParams = new ArrayList<OrderParam>();
@@ -86,11 +92,7 @@ public class FisherBot implements IBot {
             } else {
                 this.m_closes.set(i, m_inputBars.get(i).m_close);
             }
-
-
         }
-
-
     }
 
     public void updateOpen() {
@@ -369,6 +371,9 @@ public class FisherBot implements IBot {
 
         // go through all the filters
         this.updateClose();
+
+        this.m_stdFilter.filter(m_closes, m_standDeviations);
+
         this.m_ssFilter.filter(m_closes, m_smoothed);
 
         this.m_fisherFilter.filter(m_smoothed, m_fisher, m_trigger);

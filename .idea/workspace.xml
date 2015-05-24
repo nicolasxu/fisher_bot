@@ -2,14 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="09d32302-5fbd-4b19-b5c3-191d54f4a892" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/fisher/StdFilter.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/fisher_bot/com/fisher/DataHandler.class" afterPath="$PROJECT_DIR$/out/production/fisher_bot/com/fisher/DataHandler.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/fisher_bot/com/fisher/FisherBot.class" afterPath="$PROJECT_DIR$/out/production/fisher_bot/com/fisher/FisherBot.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/fisher/BotDataPlotter.java" afterPath="$PROJECT_DIR$/src/com/fisher/BotDataPlotter.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/fisher/DataHandler.java" afterPath="$PROJECT_DIR$/src/com/fisher/DataHandler.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/fisher/FisherBot.java" afterPath="$PROJECT_DIR$/src/com/fisher/FisherBot.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/fisher/FisherFilter.java" afterPath="$PROJECT_DIR$/src/com/fisher/FisherFilter.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/fisher/SuperSmootherFilter.java" afterPath="$PROJECT_DIR$/src/com/fisher/SuperSmootherFilter.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/fisher/StdFilter.java" afterPath="$PROJECT_DIR$/src/com/fisher/StdFilter.java" />
     </list>
     <ignored path="fisher_bot.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -30,21 +26,21 @@
     <favorites_list name="fisher_bot" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="vertical" split-proportion="0.6074896">
+    <splitter split-orientation="vertical" split-proportion="0.4100782">
       <split-first>
         <leaf>
-          <file leaf-file-name="DataHandler.java" pinned="false" current-in-tab="false">
+          <file leaf-file-name="DataHandler.java" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/com/fisher/DataHandler.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="-4.6296296">
-                  <caret line="91" column="58" selection-start-line="91" selection-start-column="52" selection-end-line="91" selection-end-column="58" />
+                <state vertical-scroll-proportion="3.975787">
+                  <caret line="533" column="74" selection-start-line="533" selection-start-column="74" selection-end-line="533" selection-end-column="74" />
                   <folding>
                     <element signature="imports" expanded="true" />
                     <element signature="e#3652#3662#0" expanded="true" />
-                    <element signature="e#18869#18870#0" expanded="true" />
-                    <element signature="e#18942#18943#0" expanded="true" />
-                    <element signature="e#18993#18994#0" expanded="true" />
-                    <element signature="e#19054#19055#0" expanded="true" />
+                    <element signature="e#18944#18945#0" expanded="true" />
+                    <element signature="e#19017#19018#0" expanded="true" />
+                    <element signature="e#19068#19069#0" expanded="true" />
+                    <element signature="e#19129#19130#0" expanded="true" />
                   </folding>
                 </state>
               </provider>
@@ -70,11 +66,11 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="SuperSmootherFilter.java" pinned="false" current-in-tab="true">
+          <file leaf-file-name="SuperSmootherFilter.java" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/src/com/fisher/SuperSmootherFilter.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.8897059">
-                  <caret line="54" column="5" selection-start-line="54" selection-start-column="5" selection-end-line="54" selection-end-column="5" />
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="36" column="50" selection-start-line="36" selection-start-column="50" selection-end-line="36" selection-end-column="50" />
                   <folding />
                 </state>
               </provider>
@@ -84,11 +80,11 @@
             <entry file="file://$PROJECT_DIR$/src/com/fisher/FisherBot.java">
               <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0">
-                  <caret line="54" column="40" selection-start-line="54" selection-start-column="40" selection-end-line="54" selection-end-column="40" />
+                  <caret line="392" column="26" selection-start-line="392" selection-start-column="26" selection-end-line="392" selection-end-column="26" />
                   <folding>
                     <element signature="imports" expanded="true" />
-                    <element signature="e#2712#2713#0" expanded="true" />
-                    <element signature="e#2777#2778#0" expanded="true" />
+                    <element signature="e#2939#2940#0" expanded="true" />
+                    <element signature="e#3004#3005#0" expanded="true" />
                     <element signature="method#findPastLowHigh#0;class#FisherBot#0" expanded="false" />
                     <element signature="method#isStopLossOrder#0;class#FisherBot#0" expanded="false" />
                     <element signature="method#findStopLossOrders#0;class#FisherBot#0" expanded="false" />
@@ -104,10 +100,45 @@
           <file leaf-file-name="FisherBot.java" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/src/com/fisher/FisherBot.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0">
-                  <caret line="243" column="49" selection-start-line="243" selection-start-column="49" selection-end-line="243" selection-end-column="49" />
+                <state vertical-scroll-proportion="-4.851852">
+                  <caret line="85" column="16" selection-start-line="85" selection-start-column="16" selection-end-line="85" selection-end-column="16" />
                   <folding>
                     <element signature="imports" expanded="true" />
+                    <element signature="e#2939#2940#0" expanded="true" />
+                    <element signature="e#3004#3005#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="mainFrame.java" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/com/fisher/mainFrame.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="59" column="31" selection-start-line="59" selection-start-column="21" selection-end-line="59" selection-end-column="31" />
+                  <folding>
+                    <element signature="imports" expanded="true" />
+                    <element signature="method#initComponents#0;class#mainFrame#0" expanded="false" />
+                    <marker date="1431413927000" expanded="false" signature="2084:6393" placeholder="// JFormDesigner - Component initialization - DO NOT MODIFY" />
+                    <marker date="1431413927000" expanded="false" signature="6405:6856" placeholder="// JFormDesigner - Variables declaration - DO NOT MODIFY" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="BotDataPlotter.java" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/src/com/fisher/BotDataPlotter.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.4714065">
+                  <caret line="77" column="58" selection-start-line="77" selection-start-column="58" selection-end-line="77" selection-end-column="58" />
+                  <folding>
+                    <element signature="imports" expanded="true" />
+                    <element signature="e#6393#6394#0" expanded="true" />
+                    <element signature="e#6427#6428#0" expanded="true" />
+                    <element signature="e#6592#6593#0" expanded="true" />
+                    <element signature="e#6633#6634#0" expanded="true" />
+                    <element signature="e#6693#6694#0" expanded="true" />
+                    <element signature="e#6732#6733#0" expanded="true" />
                   </folding>
                 </state>
               </provider>
@@ -123,11 +154,11 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="StdFilter.java" pinned="false" current-in-tab="true">
+          <file leaf-file-name="StdFilter.java" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/src/com/fisher/StdFilter.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.5675676">
-                  <caret line="7" column="40" selection-start-line="7" selection-start-column="40" selection-end-line="7" selection-end-column="40" />
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="48" column="0" selection-start-line="48" selection-start-column="0" selection-end-line="48" selection-end-column="0" />
                   <folding />
                 </state>
               </provider>
@@ -160,7 +191,6 @@
         <option value="$PROJECT_DIR$/src/com/fisher/IBot.java" />
         <option value="$PROJECT_DIR$/src/com/fisher/IFilter.java" />
         <option value="$PROJECT_DIR$/src/com/fisher/mainFrame.jfd" />
-        <option value="$PROJECT_DIR$/src/com/fisher/BotDataPlotter.java" />
         <option value="$PROJECT_DIR$/src/com/fisher/ILogger.java" />
         <option value="$PROJECT_DIR$/src/com/fisher/mainFrame.java" />
         <option value="$PROJECT_DIR$/src/com/fisher/TextAreaLogger.java" />
@@ -176,11 +206,12 @@
         <option value="$PROJECT_DIR$/src/com/fisher/IDataTank.java" />
         <option value="$PROJECT_DIR$/src/com/fisher/DataTank.java" />
         <option value="$PROJECT_DIR$/src/com/fisher/Main.java" />
-        <option value="$PROJECT_DIR$/src/com/fisher/StdFilter.java" />
-        <option value="$PROJECT_DIR$/src/com/fisher/DataHandler.java" />
         <option value="$PROJECT_DIR$/src/com/fisher/SuperSmootherFilter.java" />
-        <option value="$PROJECT_DIR$/src/com/fisher/FisherBot.java" />
         <option value="$PROJECT_DIR$/src/com/fisher/FisherFilter.java" />
+        <option value="$PROJECT_DIR$/src/com/fisher/StdFilter.java" />
+        <option value="$PROJECT_DIR$/src/com/fisher/FisherBot.java" />
+        <option value="$PROJECT_DIR$/src/com/fisher/DataHandler.java" />
+        <option value="$PROJECT_DIR$/src/com/fisher/BotDataPlotter.java" />
       </list>
     </option>
   </component>
@@ -195,10 +226,10 @@
     <order />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="1512" />
-    <option name="y" value="181" />
+    <option name="x" value="1447" />
+    <option name="y" value="-517" />
     <option name="width" value="1322" />
-    <option name="height" value="813" />
+    <option name="height" value="1416" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <OptionsSetting value="true" id="Add" />
@@ -537,7 +568,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="1512" y="181" width="1322" height="813" extended-state="0" />
+    <frame x="1447" y="-517" width="1322" height="1416" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -557,7 +588,7 @@
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21953125" sideWeight="0.49270073" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.23994452" sideWeight="0.5751258" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.13066465" sideWeight="0.5751258" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -616,10 +647,10 @@
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#3652#3662#0" expanded="true" />
-            <element signature="e#18869#18870#0" expanded="true" />
-            <element signature="e#18942#18943#0" expanded="true" />
-            <element signature="e#18993#18994#0" expanded="true" />
-            <element signature="e#19054#19055#0" expanded="true" />
+            <element signature="e#18944#18945#0" expanded="true" />
+            <element signature="e#19017#19018#0" expanded="true" />
+            <element signature="e#19068#19069#0" expanded="true" />
+            <element signature="e#19129#19130#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -654,10 +685,10 @@
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#3652#3662#0" expanded="true" />
-            <element signature="e#18869#18870#0" expanded="true" />
-            <element signature="e#18942#18943#0" expanded="true" />
-            <element signature="e#18993#18994#0" expanded="true" />
-            <element signature="e#19054#19055#0" expanded="true" />
+            <element signature="e#18944#18945#0" expanded="true" />
+            <element signature="e#19017#19018#0" expanded="true" />
+            <element signature="e#19068#19069#0" expanded="true" />
+            <element signature="e#19129#19130#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -692,10 +723,10 @@
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#3652#3662#0" expanded="true" />
-            <element signature="e#18869#18870#0" expanded="true" />
-            <element signature="e#18942#18943#0" expanded="true" />
-            <element signature="e#18993#18994#0" expanded="true" />
-            <element signature="e#19054#19055#0" expanded="true" />
+            <element signature="e#18944#18945#0" expanded="true" />
+            <element signature="e#19017#19018#0" expanded="true" />
+            <element signature="e#19068#19069#0" expanded="true" />
+            <element signature="e#19129#19130#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -715,10 +746,10 @@
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#3652#3662#0" expanded="true" />
-            <element signature="e#18869#18870#0" expanded="true" />
-            <element signature="e#18942#18943#0" expanded="true" />
-            <element signature="e#18993#18994#0" expanded="true" />
-            <element signature="e#19054#19055#0" expanded="true" />
+            <element signature="e#18944#18945#0" expanded="true" />
+            <element signature="e#19017#19018#0" expanded="true" />
+            <element signature="e#19068#19069#0" expanded="true" />
+            <element signature="e#19129#19130#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -886,11 +917,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/fisher/mainFrame.jfd">
-      <provider selected="true" editor-type-id="JFormDesigner">
-        <state />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/fisher/TextAreaLogger.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.7386364">
@@ -911,19 +937,6 @@
         <state vertical-scroll-proportion="0.5480769">
           <caret line="20" column="0" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/fisher/mainFrame.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="60" column="0" selection-start-line="60" selection-start-column="0" selection-end-line="60" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="method#initComponents#0;class#mainFrame#0" expanded="false" />
-            <marker date="1431413927000" expanded="true" signature="-1:-1" placeholder="// JFormDesigner - Component initialization - DO NOT MODIFY" />
-            <marker date="1431413927000" expanded="true" signature="-1:-1" placeholder="// JFormDesigner - Variables declaration - DO NOT MODIFY" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1037,13 +1050,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/fisher/BotDataPlotter.java">
+    <entry file="file://$PROJECT_DIR$/src/com/fisher/FisherFilter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.39423078">
-          <caret line="69" column="54" selection-start-line="69" selection-start-column="42" selection-end-line="69" selection-end-column="54" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state vertical-scroll-proportion="0.0">
+          <caret line="98" column="0" selection-start-line="98" selection-start-column="0" selection-end-line="98" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1055,25 +1066,36 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/fisher/StdFilter.java">
+    <entry file="file://$PROJECT_DIR$/src/com/fisher/SuperSmootherFilter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5675676">
-          <caret line="7" column="40" selection-start-line="7" selection-start-column="40" selection-end-line="7" selection-end-column="40" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="36" column="50" selection-start-line="36" selection-start-column="50" selection-end-line="36" selection-end-column="50" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/fisher/DataHandler.java">
+    <entry file="file://$PROJECT_DIR$/src/com/fisher/mainFrame.jfd">
+      <provider selected="true" editor-type-id="JFormDesigner">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/fisher/StdFilter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-4.6296296">
-          <caret line="91" column="58" selection-start-line="91" selection-start-column="52" selection-end-line="91" selection-end-column="58" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="48" column="0" selection-start-line="48" selection-start-column="0" selection-end-line="48" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/fisher/mainFrame.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="59" column="31" selection-start-line="59" selection-start-column="21" selection-end-line="59" selection-end-column="31" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#3652#3662#0" expanded="true" />
-            <element signature="e#18869#18870#0" expanded="true" />
-            <element signature="e#18942#18943#0" expanded="true" />
-            <element signature="e#18993#18994#0" expanded="true" />
-            <element signature="e#19054#19055#0" expanded="true" />
+            <element signature="method#initComponents#0;class#mainFrame#0" expanded="false" />
+            <marker date="1431413927000" expanded="false" signature="2084:6393" placeholder="// JFormDesigner - Component initialization - DO NOT MODIFY" />
+            <marker date="1431413927000" expanded="false" signature="6405:6856" placeholder="// JFormDesigner - Variables declaration - DO NOT MODIFY" />
           </folding>
         </state>
       </provider>
@@ -1081,11 +1103,11 @@
     <entry file="file://$PROJECT_DIR$/src/com/fisher/FisherBot.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="54" column="40" selection-start-line="54" selection-start-column="40" selection-end-line="54" selection-end-column="40" />
+          <caret line="392" column="26" selection-start-line="392" selection-start-column="26" selection-end-line="392" selection-end-column="26" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#2712#2713#0" expanded="true" />
-            <element signature="e#2777#2778#0" expanded="true" />
+            <element signature="e#2939#2940#0" expanded="true" />
+            <element signature="e#3004#3005#0" expanded="true" />
             <element signature="method#findPastLowHigh#0;class#FisherBot#0" expanded="false" />
             <element signature="method#isStopLossOrder#0;class#FisherBot#0" expanded="false" />
             <element signature="method#findStopLossOrders#0;class#FisherBot#0" expanded="false" />
@@ -1093,19 +1115,34 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/fisher/FisherFilter.java">
+    <entry file="file://$PROJECT_DIR$/src/com/fisher/BotDataPlotter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="98" column="0" selection-start-line="98" selection-start-column="0" selection-end-line="98" selection-end-column="0" />
-          <folding />
+        <state vertical-scroll-proportion="0.4714065">
+          <caret line="77" column="58" selection-start-line="77" selection-start-column="58" selection-end-line="77" selection-end-column="58" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#6393#6394#0" expanded="true" />
+            <element signature="e#6427#6428#0" expanded="true" />
+            <element signature="e#6592#6593#0" expanded="true" />
+            <element signature="e#6633#6634#0" expanded="true" />
+            <element signature="e#6693#6694#0" expanded="true" />
+            <element signature="e#6732#6733#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/fisher/SuperSmootherFilter.java">
+    <entry file="file://$PROJECT_DIR$/src/com/fisher/DataHandler.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.8897059">
-          <caret line="54" column="5" selection-start-line="54" selection-start-column="5" selection-end-line="54" selection-end-column="5" />
-          <folding />
+        <state vertical-scroll-proportion="3.975787">
+          <caret line="533" column="74" selection-start-line="533" selection-start-column="74" selection-end-line="533" selection-end-column="74" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#3652#3662#0" expanded="true" />
+            <element signature="e#18944#18945#0" expanded="true" />
+            <element signature="e#19017#19018#0" expanded="true" />
+            <element signature="e#19068#19069#0" expanded="true" />
+            <element signature="e#19129#19130#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

@@ -531,6 +531,7 @@ public class DataHandler implements EWrapper{
             this.m_appPlotter.setBarSource(this.m_bars);
             this.m_appPlotter.setFisherSource(m_fisherBot.m_fisher);
             this.m_appPlotter.setTriggerSource(m_fisherBot.m_trigger);
+            this.m_appPlotter.setStdSource(m_fisherBot.m_standDeviations);
             this.m_appPlotter.updatePlotData();
 
             this.requestLiveData();

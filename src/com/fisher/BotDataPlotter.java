@@ -42,6 +42,7 @@ public class BotDataPlotter {
     public ArrayList<Bar> m_bars;
     public ArrayList<Double> m_fishers;
     public ArrayList<Double> m_triggers;
+    public ArrayList<Double> m_stds;
 
 
 
@@ -50,7 +51,9 @@ public class BotDataPlotter {
     public OHLCSeriesCollection m_ohlcDataset;
     public TimeSeries  m_fisherSeries;
     public TimeSeries  m_triggerSeries;
+    public TimeSeries  m_stdSeries;
     public TimeSeriesCollection m_tsCollection;
+    public TimeSeriesCollection m_stdCollection;
 
 
     public BotDataPlotter() {
@@ -64,6 +67,7 @@ public class BotDataPlotter {
         this.m_ohlcSeries = new OHLCSeries("bars");
         this.m_fisherSeries = new TimeSeries("fisher");
         this.m_triggerSeries = new TimeSeries("trigger");
+        this.m_stdSeries = new TimeSeries("STD");
 
         // mount series to dataset
         this.m_ohlcDataset = new OHLCSeriesCollection();
@@ -71,6 +75,8 @@ public class BotDataPlotter {
         this.m_tsCollection = new TimeSeriesCollection();
         this.m_tsCollection.addSeries(this.m_fisherSeries);
         this.m_tsCollection.addSeries(this.m_triggerSeries);
+        this.m_stdCollection = new TimeSeriesCollection();
+        this.m_stdCollection.addSeries(this.m_stdSeries);
 
         // update plot data based on empoty reference
         this.updatePlotData();
@@ -100,6 +106,7 @@ public class BotDataPlotter {
 
             m_fisherSeries.add(theMinute, m_fishers.get(i));
             m_triggerSeries.add(theMinute, m_triggers.get(i));
+            m_stdSeries.add(theMinute, m_stds.get(i));
 
         }
 
@@ -116,28 +123,38 @@ public class BotDataPlotter {
         // 1. create OHLC plot
         String valueAxisLabel = "Price"; // range axis title only for OHLC
         NumberAxis valueAxis = new NumberAxis(valueAxisLabel);
+        valueAxis.setAutoRangeIncludesZero(false);
         XYPlot candlePlot = new XYPlot(this.m_ohlcDataset, null, valueAxis, (XYItemRenderer)null);
         candlePlot.setRenderer(new CandlestickRenderer());
 
         // 2. create fisher and trigger plot
-        String fisherRangeLabel = "";
+        String fisherRangeLabel = "Fisher Value";
         NumberAxis fisherValueAxis = new NumberAxis(fisherRangeLabel);
-        valueAxis.setAutoRangeIncludesZero(false);
         XYPlot fisherPlot = new XYPlot(this.m_tsCollection, null, fisherValueAxis, (XYItemRenderer)null);
         StandardXYToolTipGenerator toolTipGenerator = null;
         XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer(true, false);
         fisherPlot.setRenderer(renderer);
 
-        // 3. create the combined plot
+        // 3. create std plot
+        String stdRangeLabel = "STD Value";
+        NumberAxis stdValueAxis = new NumberAxis(stdRangeLabel);
+        XYPlot stdPlot = new XYPlot(this.m_stdCollection, null, stdValueAxis, (XYItemRenderer)null);
+        XYLineAndShapeRenderer stdRenderer = new XYLineAndShapeRenderer(true, false);
+        stdPlot.setRenderer(stdRenderer);
+
+
+
+        // 4. create the combined plot
         CombinedDomainXYPlot combinedPlot = new CombinedDomainXYPlot(timeAxis); // passing in the common Axis
         combinedPlot.add(candlePlot, 1);
         combinedPlot.add(fisherPlot, 1);
+        combinedPlot.add(stdPlot, 1);
         combinedPlot.setGap(8.0D);
         combinedPlot.setDomainGridlinePaint(Color.white);
         combinedPlot.setDomainGridlinesVisible(true);
         combinedPlot.setDomainPannable(true);
 
-        // 4. create the chart
+        // 5. create the chart
         JFreeChart chart = new JFreeChart("United States Public Debt", JFreeChart.DEFAULT_TITLE_FONT, combinedPlot, false);
         ChartUtilities.applyCurrentTheme(chart);
 
@@ -162,6 +179,8 @@ public class BotDataPlotter {
     }
     public void setTriggerSource (ArrayList<Double> trigger) {
         this.m_triggers = trigger;
-
+    }
+    public void setStdSource(ArrayList<Double> stdSource) {
+        this.m_stds = stdSource;
     }
 }
