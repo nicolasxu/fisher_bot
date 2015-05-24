@@ -98,8 +98,8 @@ public class FisherFilter extends IFilter{
 
 
     }
-    public FisherFilter() {
-        this.period = 15;
+    public FisherFilter(int period) {
+        this.period = period;
         this.midValues = new ArrayList<Double>();
     }
 

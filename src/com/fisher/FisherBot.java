@@ -2,7 +2,9 @@ package com.fisher;
 
 import com.ib.client.Order;
 import com.ib.client.OrderState;
+import com.ib.controller.Bar;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +16,7 @@ public class FisherBot implements IBot {
 
 
     public DataHandler m_dataHandler;
-    public ArrayList<Double> m_inputData;
+
     public ArrayList<Double> m_smoothed;
 
     public SuperSmootherFilter m_ssFilter;
@@ -36,20 +38,28 @@ public class FisherBot implements IBot {
     public double m_highest;
     public HashMap<Integer, Boolean> m_stopLossOrderTriggered;
     public ArrayList<OrderParam> m_orderParams;
+    public ArrayList<Bar> m_inputBars;
+    public ArrayList<Double> m_opens;
+    public ArrayList<Double> m_closes;
+    public ArrayList<Double> m_medians;
 
     public ILogger logger;
 
-    public FisherBot(DataHandler handler, ArrayList<Double> inputData, ILogger logger) {
+    public FisherBot(DataHandler handler, ArrayList<Bar> bars, ILogger logger) {
         this.m_dataHandler = handler;
-        this.m_inputData = inputData;
-        this.logger = logger;
 
-        this.m_ssFilter = new SuperSmootherFilter();
-        this.m_fisherFilter = new FisherFilter();
+        this.logger = logger;
+        this.m_inputBars = bars;
+
+        this.m_ssFilter = new SuperSmootherFilter(1);
+        this.m_fisherFilter = new FisherFilter(8);
 
         this.m_smoothed = new ArrayList<Double>();
         this.m_fisher = new ArrayList<Double>();
         this.m_trigger = new ArrayList<Double>();
+        this.m_opens = new ArrayList<Double>();
+        this.m_closes = new ArrayList<Double>();
+        this.m_medians = new ArrayList<Double>();
 
         this.m_stopLossOrderTriggered = new HashMap<Integer, Boolean>();
         this.m_orderParams = new ArrayList<OrderParam>();
@@ -65,6 +75,30 @@ public class FisherBot implements IBot {
 
         this.m_thisBarBought = false;
         this.m_thisBarSold   = false;
+    }
+
+    public void updateClose() {
+
+        for (int i = Math.max(0, m_closes.size() - 1 ); i < m_inputBars.size(); i ++) {
+
+            if(i >= m_closes.size()) {
+                this.m_closes.add(m_inputBars.get(i).m_close);
+            } else {
+                this.m_closes.set(i, m_inputBars.get(i).m_close);
+            }
+
+
+        }
+
+
+    }
+
+    public void updateOpen() {
+        ArrayList<Double> opens = new ArrayList<Double>();
+    }
+
+    public void updateMedian() {
+
     }
 
     public class OrderParam {
@@ -93,12 +127,16 @@ public class FisherBot implements IBot {
         double profitSize;
 
         if(m_orderParams.size() > 0) {
+            logger.log("m_orderParams.size(): " + m_orderParams.size());
             OrderParam param = m_orderParams.get(m_orderParams.size() - 1);
             quantity = param.orderSize;
             profitSize = param.profitPoint;
+            logger.log("buying using next size: " + quantity + " take profit size: " + profitSize);
             // remove one
             m_orderParams.remove(m_orderParams.size() - 1);
+            logger.log("m_orderParams.size() after: " + m_orderParams.size());
         } else {
+            logger.log("using intial lot size and take profit size");
             quantity = this.m_initialLotSize;
             profitSize = this.m_initialProfitSize;
         }
@@ -158,12 +196,16 @@ public class FisherBot implements IBot {
         double profitSize;
 
         if(m_orderParams.size() > 0) {
+            logger.log("m_orderParams.size(): " + m_orderParams.size());
             OrderParam param = m_orderParams.get(m_orderParams.size() - 1);
             quantity = param.orderSize;
             profitSize = param.profitPoint;
+            logger.log("selling using next size: " + quantity + " take profit size: " + profitSize);
             // remove one
             m_orderParams.remove(m_orderParams.size() - 1);
+            logger.log("m_orderParams.size() after: " + m_orderParams.size());
         } else {
+            logger.log("selling using intial lot size and take profit size");
             quantity = this.m_initialLotSize;
             profitSize = this.m_initialProfitSize;
         }
@@ -278,7 +320,9 @@ public class FisherBot implements IBot {
         // 1. m_currentLotSize
         // 2. m_profitSize
         double loss = findLossInPoint(orderId); // 0.00043 * 100000
+        logger.log("loss in points: " + loss);
         int nextSize = (int)(loss/ m_initialProfitSize + m_initialLotSize);
+        logger.log("next size: " + nextSize);
         //OrderParam(int size, double porfit)
         OrderParam op = new OrderParam( nextSize, this.m_initialProfitSize);
         this.m_orderParams.add(op);
@@ -301,6 +345,7 @@ public class FisherBot implements IBot {
                 // not previously triggered
                 OrderState state = this.m_dataHandler.m_orderStates.get(orderId);
                 if(state.m_status.compareTo("Filled") == 0) {
+                    logger.log("stopLoss Order triggered: " + orderId);
                     // but new state is filled
                     this.processTriggeredStopLoss(orderId);
                     this.m_stopLossOrderTriggered.put(orderId, true);
@@ -323,18 +368,18 @@ public class FisherBot implements IBot {
     public void calculate() {
 
         // go through all the filters
-
-        this.m_ssFilter.filter(m_inputData, m_smoothed);
+        this.updateClose();
+        this.m_ssFilter.filter(m_closes, m_smoothed);
 
         this.m_fisherFilter.filter(m_smoothed, m_fisher, m_trigger);
 
-        if(m_inputData.size() > m_lastBarCount) {
+        if(m_inputBars.size() > m_lastBarCount) {
             // new bar
             m_thisBarBought = false;
             m_thisBarSold = false;
         }
 
-        this.m_lastBarCount = m_inputData.size();
+        this.m_lastBarCount = m_inputBars.size();
 
         this.findPastLowHigh();
 
@@ -353,7 +398,7 @@ public class FisherBot implements IBot {
 
 
 
-        logger.log("fIm2: "+fIm2+ " fIm1: " +fIm1+" fI: "+ fI);
+        //logger.log("fIm2: "+fIm2+ " fIm1: " +fIm1+" fI: "+ fI);
 
         // decision logic goes here...
 

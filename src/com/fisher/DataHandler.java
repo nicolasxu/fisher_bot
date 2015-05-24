@@ -89,7 +89,7 @@ public class DataHandler implements EWrapper{
 
         this.m_systemStartTimeString = "";
 
-        this.m_fisherBot = new FisherBot(this, this.m_medians, logger);
+        this.m_fisherBot = new FisherBot(this, this.m_bars, logger);
 
         m_request.eConnect(null, 7496, this.m_clientId);
 
@@ -165,7 +165,7 @@ public class DataHandler implements EWrapper{
                     this.m_medians.add(lastClosePrice);
 
                     ////////// debug log msg ///////
-
+                    /*
                     System.out.println("new bar!");
                     Bar last2Bar = this.m_bars.get(m_bars.size() -2);
 
@@ -186,7 +186,7 @@ public class DataHandler implements EWrapper{
                     System.out.println(logMsg2);
 
                     System.out.println("current median price: " + m_medians.get(m_medians.size() -1));
-
+                    */
                     //////// end of debug log msg //////
 
                     // calculate

@@ -49,8 +49,8 @@ public class SuperSmootherFilter extends IFilter{
         //double latestValue = output.get(output.size() - 1);
         //System.out.println("SuperSmoother latest value: " + latestValue);
     }
-    public SuperSmootherFilter() {
-        this.ssPeriod = 10;
+    public SuperSmootherFilter(int period) {
+        this.ssPeriod = period;
 
     }
     public void setPeriod(int p) {
