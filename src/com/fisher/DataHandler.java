@@ -97,6 +97,10 @@ public class DataHandler implements EWrapper{
 
         this.m_newBarFlag = false;
 
+        ILogger fileLogger = new FileLogger();
+        fileLogger.log("this is test message2222222");
+        fileLogger.log("this is test message3333333");
+
     }
 
     public void setPlotter(BotDataPlotter plotter) {
