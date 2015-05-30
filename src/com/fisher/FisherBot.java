@@ -4,7 +4,7 @@ import com.ib.client.Order;
 import com.ib.client.OrderState;
 import com.ib.controller.Bar;
 
-import java.lang.reflect.Array;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -44,6 +44,8 @@ public class FisherBot implements IBot {
     public ArrayList<Double> m_opens;
     public ArrayList<Double> m_closes;
     public ArrayList<Double> m_medians;
+    public int m_maxSize;
+    public int m_lossInPoint;
 
     public ILogger logger;
 
@@ -52,10 +54,12 @@ public class FisherBot implements IBot {
 
         this.logger = logger;
         this.m_inputBars = bars;
+        this.m_maxSize = 450000; // 45 wan
+        this.m_lossInPoint = 0;
 
         // init filters
-        this.m_ssFilter = new SuperSmootherFilter(1);
-        this.m_fisherFilter = new FisherFilter(8);
+        this.m_ssFilter = new SuperSmootherFilter(5);
+        this.m_fisherFilter = new FisherFilter(15);
         this.m_stdFilter = new StdFilter(8);
 
         // init value
@@ -283,6 +287,10 @@ public class FisherBot implements IBot {
     }
     public boolean isStopLossOrder(int orderId) {
         Order theOrder = this.m_dataHandler.m_orders.get(orderId);
+        // if order is executed before the program started, then the get result is empty
+        if (theOrder == null) {
+            return false;
+        }
         if(theOrder.m_auxPrice > 0 && theOrder.m_orderType.compareTo("STP") == 0 && theOrder.m_parentId > 0) {
             return true;
         }
@@ -303,17 +311,24 @@ public class FisherBot implements IBot {
     double findLossInPoint(int stopLossOrderId) {
         //return 0.00001 * point * lotSize
         Order slOrder = this.m_dataHandler.m_orders.get(stopLossOrderId);
+        if (slOrder == null) {
+            logger.log("stoploss order " + stopLossOrderId + "is null");
+        }
         double auxPrice = slOrder.m_auxPrice;
         int parentId = slOrder.m_parentId;
         Order parentOrder = this.m_dataHandler.m_orders.get(parentId);
+        if(parentOrder == null) {
+            logger.log("parentOrder "+parentId+ " is null");
+            return 100.0;
+        }
         int quantity = parentOrder.m_totalQuantity; // e.g.: 100000
         if(parentOrder.m_action.compareTo("BUY") == 0) {
             // buy order
-            System.out.println("buy order loss: " + (parentOrder.m_lmtPrice - auxPrice) + " quantity: " + quantity);
+            System.out.println("buy order loss: " +  String.format("%.5g%n", (parentOrder.m_lmtPrice - auxPrice))  + " quantity: " + quantity);
             return (parentOrder.m_lmtPrice - auxPrice) * quantity;
         } else {
             // sell order
-            System.out.println("sell order loss: " + (auxPrice - parentOrder.m_lmtPrice) + " quantity: " + quantity);
+            System.out.println("sell order loss: " + String.format("%.5g%n", (auxPrice - parentOrder.m_lmtPrice))  + " quantity: " + quantity);
             return (auxPrice - parentOrder.m_lmtPrice) * quantity;
         }
     }
@@ -321,13 +336,16 @@ public class FisherBot implements IBot {
         // based on triggered stop loss order, set
         // 1. m_currentLotSize
         // 2. m_profitSize
+        logger.log("running findLossInPoint(orderId)");
         double loss = findLossInPoint(orderId); // 0.00043 * 100000
+        this.m_lossInPoint = this.m_lossInPoint + (int)loss;
         logger.log("loss in points: " + loss);
         int nextSize = (int)(loss/ m_initialProfitSize + m_initialLotSize);
         logger.log("next size: " + nextSize);
         //OrderParam(int size, double porfit)
         OrderParam op = new OrderParam( nextSize, this.m_initialProfitSize);
         this.m_orderParams.add(op);
+        logger.log("m_orderParams.size(): " + this.m_orderParams.size());
 
 
     }
@@ -391,44 +409,52 @@ public class FisherBot implements IBot {
 
     }
     public void decide() {
-        double fI, tI; // latest fisher[i], trigger[i]
-        double fIm1, fIm2, tIm1; // fisher[i-1], trigger[i-1]
+        double fI; // latest fisher[i], trigger[i]
+        double fIm1, fIm2, fIm3; // fisher[i-1], trigger[i-1]
+        int fisherCount = this.m_fisher.size();
+        fI = this.m_fisher.get(fisherCount - 1 );
 
-        fI = this.m_fisher.get(this.m_fisher.size() - 1 );
-        tI = this.m_trigger.get(this.m_trigger.size() - 1);
 
-        fIm1 = this.m_fisher.get(this.m_fisher.size() - 2);
-        fIm2 = this.m_fisher.get(this.m_fisher.size() - 3);
-        tIm1 = this.m_trigger.get(this.m_trigger.size() - 2);
+        fIm1 = this.m_fisher.get(fisherCount - 2);
+        fIm2 = this.m_fisher.get(fisherCount - 3);
+        fIm3 = this.m_fisher.get(fisherCount - 4);
 
+
+        if (Math.abs(fI ) > 1 || Math.abs(fIm1) > 1 || Math.abs(fIm2) > 1 || Math.abs(fIm3) > 1) {
+            // if any slight clue, fisher value abs is more than 1, then using this logic
+
+
+            if(fI > fIm1 && fIm2 > fIm1) {
+
+                if(m_thisBarBought == false ) {
+                    logger.log("executing buying...");
+                    logger.log("fIm2: " +fIm2+ " FIm1: "+fIm1 +"FI: "+ fI);
+                    this.buy();
+                    m_thisBarBought = true;
+                }
+            }
+
+            if(fI < fIm1 && fIm2 < fIm1) {
+
+                if(m_thisBarSold == false) {
+                    logger.log("executing selling...");
+                    logger.log("fIm2: " +fIm2+ " FIm1: "+fIm1 +"FI: "+ fI);
+                    this.sell();
+                    m_thisBarSold = true;
+                }
+            }
+
+
+        } else {
+            // or using the following logic
+
+        }
 
 
         //logger.log("fIm2: "+fIm2+ " fIm1: " +fIm1+" fI: "+ fI);
 
         // decision logic goes here...
 
-        if(fI > fIm1 && fIm2 > fIm1) {
-
-            if(m_thisBarBought == false ) {
-                logger.log("buying...");
-                this.buy();
-                m_thisBarBought = true;
-            }
-
-        }
-
-        if(fI < fIm1 && fIm2 < fIm1) {
-
-            if(m_thisBarSold == false) {
-                logger.log("selling...");
-                this.sell();
-                m_thisBarSold = true;
-            }
-
-        }
-
-
 
     }
-
 }

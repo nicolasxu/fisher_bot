@@ -42,7 +42,7 @@ public class FileLogger implements ILogger {
         DateFormat sdf = new SimpleDateFormat("yyyyMMdd");
         DateFormat sdf1 = new SimpleDateFormat("HH:mm:ss");
         String logDateString = sdf.format(date);
-        System.out.println("logDateString: " + logDateString);
+        //System.out.println("logDateString: " + logDateString);
         BufferedWriter bwToUse = null;
         if(logDateString.compareTo(m_firstOpenDate) == 0) {
             // use old buffer writer

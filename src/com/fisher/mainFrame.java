@@ -28,7 +28,7 @@ public class mainFrame extends JFrame {
     private JScrollPane plotScrollPane;
 
     public TextAreaLogger logger;
-
+    public FileLogger fileLogger;
 
 
 
@@ -49,6 +49,7 @@ public class mainFrame extends JFrame {
         pane.add(this.plotScrollPane, BorderLayout.SOUTH);
 
         this.logger = new TextAreaLogger(logArea);
+        this.fileLogger = new FileLogger();
 
 
     }
@@ -56,7 +57,7 @@ public class mainFrame extends JFrame {
     private void startButtonActionPerformed(ActionEvent e) {
         // TODO add your code here
         this.logger.log("starting the application");
-        this.handler = new DataHandler(logger); // kick start the connection in the DataHandler constructor
+        this.handler = new DataHandler(fileLogger); // kick start the connection in the DataHandler constructor
         this.handler.setPlotter(this.plotter);
 
         this.plotter.purgeDrawingData();
@@ -97,6 +98,7 @@ public class mainFrame extends JFrame {
         //======== dialogPane ========
         {
             dialogPane.setBorder(new EmptyBorder(12, 12, 12, 12));
+            dialogPane.setPreferredSize(new Dimension(758, 900));
 
             // JFormDesigner evaluation mark
             dialogPane.setBorder(new javax.swing.border.CompoundBorder(
@@ -119,13 +121,13 @@ public class mainFrame extends JFrame {
                 contentPanel.setLayout(contentPanelLayout);
                 contentPanelLayout.setHorizontalGroup(
                     contentPanelLayout.createParallelGroup()
-                        .addComponent(scrollPaneLogArea, GroupLayout.DEFAULT_SIZE, 699, Short.MAX_VALUE)
+                        .addComponent(scrollPaneLogArea, GroupLayout.DEFAULT_SIZE, 734, Short.MAX_VALUE)
                 );
                 contentPanelLayout.setVerticalGroup(
                     contentPanelLayout.createParallelGroup()
                         .addGroup(contentPanelLayout.createSequentialGroup()
                             .addComponent(scrollPaneLogArea, GroupLayout.PREFERRED_SIZE, 225, GroupLayout.PREFERRED_SIZE)
-                            .addGap(0, 406, Short.MAX_VALUE))
+                            .addGap(0, 476, Short.MAX_VALUE))
                 );
             }
             dialogPane.add(contentPanel, BorderLayout.CENTER);

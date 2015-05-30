@@ -54,7 +54,7 @@ public class DataHandler implements EWrapper{
 
     public DataHandler(ILogger logger) {
 
-        logger.log("DataHandler() called...");
+
         this.m_logger = logger;
 
         this.m_reqId = 1; // increase one after each request
@@ -93,13 +93,32 @@ public class DataHandler implements EWrapper{
 
         m_request.eConnect(null, 7496, this.m_clientId);
 
+        //this.connectForever(60);
+
         m_request.reqCurrentTime(); // request server time first
 
         this.m_newBarFlag = false;
 
-        ILogger fileLogger = new FileLogger();
-        fileLogger.log("this is test message2222222");
-        fileLogger.log("this is test message3333333");
+
+    }
+
+    public void connectForever(int seconds) {
+        class AlwaysConnect extends TimerTask {
+
+            /**
+             * The action to be performed by this timer task.
+             */
+            @Override
+            public void run() {
+                System.out.println("checking connection...");
+                if (m_request.isConnected() == false) {
+                    m_request.eConnect(null, 7496, m_clientId);
+                }
+            }
+        }
+        TimerTask theTask = new AlwaysConnect();
+        Timer theTimer = new Timer();
+        theTimer.schedule(theTask, 0, seconds * 1000); // every one min
 
     }
 
@@ -167,31 +186,6 @@ public class DataHandler implements EWrapper{
 
                     // create and add new mediens
                     this.m_medians.add(lastClosePrice);
-
-                    ////////// debug log msg ///////
-                    /*
-                    System.out.println("new bar!");
-                    Bar last2Bar = this.m_bars.get(m_bars.size() -2);
-
-                    String logMsg = last2Bar.m_time + " last bar - open: " + last2Bar.open();
-                    logMsg = logMsg + " close: " + last2Bar.close();
-                    logMsg = logMsg + " low: " + last2Bar.low();
-                    logMsg = logMsg + " high: " + last2Bar.high();
-                    System.out.println(logMsg);
-
-                    System.out.println("last bar median price: " + m_medians.get(m_medians.size() - 2));
-
-                    Bar currentBar = this.m_bars.get(m_bars.size() -1);
-                    String logMsg2 = currentBar.m_time + " current bar - open: " + currentBar.open();
-                    logMsg2 = logMsg2 + " close: " + currentBar.close();
-                    logMsg2 = logMsg2 + " low: " + currentBar.low();
-                    logMsg2 = logMsg2 + " high: " + currentBar.high();
-
-                    System.out.println(logMsg2);
-
-                    System.out.println("current median price: " + m_medians.get(m_medians.size() -1));
-                    */
-                    //////// end of debug log msg //////
 
                     // calculate
                     this.m_fisherBot.calculate();
@@ -313,6 +307,7 @@ public class DataHandler implements EWrapper{
     @Override
     public void tickPrice(int tickerId, int field, double price, int canAutoExecute) {
 
+
         String fieldDesc = TickType.getField(field);
         //System.out.println(fieldDesc + ": " + price);
 
@@ -372,13 +367,13 @@ public class DataHandler implements EWrapper{
 
     @Override
     public void tickGeneric(int tickerId, int tickType, double value) {
-        this.m_logger.log("tickGeneric() -" + " type: " + tickType + " value: " + value);
+
     }
 
     @Override
     public void tickString(int tickerId, int tickType, String value) {
         TickType.getField(tickType);
-        this.m_logger.log("tickString() - " + "type: " + tickType + " value: " + value);
+
     }
 
     @Override
@@ -388,7 +383,7 @@ public class DataHandler implements EWrapper{
 
     @Override
     public void orderStatus(int orderId, String status, int filled, int remaining, double avgFillPrice, int permId, int parentId, double lastFillPrice, int clientId, String whyHeld) {
-        //this.m_logger.log("OrderId: "+ orderId + " Status: " + status + " ParentId: " + parentId);
+
     }
 
     @Override
@@ -536,6 +531,7 @@ public class DataHandler implements EWrapper{
             this.m_appPlotter.setFisherSource(m_fisherBot.m_fisher);
             this.m_appPlotter.setTriggerSource(m_fisherBot.m_trigger);
             this.m_appPlotter.setStdSource(m_fisherBot.m_standDeviations);
+            this.m_appPlotter.purgeDrawingData();
             this.m_appPlotter.updatePlotData();
 
             this.requestLiveData();
@@ -664,6 +660,6 @@ public class DataHandler implements EWrapper{
 
     @Override
     public void connectionClosed() {
-
+        System.out.println("connectionClosed() - connection closed ");
     }
 }

@@ -9,9 +9,10 @@ new FormModel {
 			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
 				name: "dialogPane"
 				"border": new javax.swing.border.EmptyBorder( 12, 12, 12, 12 )
+				"preferredSize": new java.awt.Dimension( 758, 900 )
 				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-					"$horizontalGroup": "par l {comp scrollPaneLogArea::l::699:x}"
-					"$verticalGroup": "par l {seq l {comp scrollPaneLogArea:::p:225:p, space :0:406:x}}"
+					"$horizontalGroup": "par l {comp scrollPaneLogArea::l::734:x}"
+					"$verticalGroup": "par l {seq l {comp scrollPaneLogArea:::p:225:p, space :0:476:x}}"
 				} ) {
 					name: "contentPanel"
 					add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
@@ -55,7 +56,7 @@ new FormModel {
 			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 0, 0 )
-			"size": new java.awt.Dimension( 760, 720 )
+			"size": new java.awt.Dimension( 760, 790 )
 		} )
 	}
 }

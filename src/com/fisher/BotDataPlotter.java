@@ -168,6 +168,7 @@ public class BotDataPlotter {
         this.m_ohlcSeries.clear();
         this.m_fisherSeries.clear();
         this.m_triggerSeries.clear();
+        this.m_stdSeries.clear();
 
     }
 
