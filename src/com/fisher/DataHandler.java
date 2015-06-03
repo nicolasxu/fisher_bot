@@ -3,7 +3,6 @@ package com.fisher;
 import com.ib.client.*;
 import com.ib.controller.Bar;
 
-import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -390,11 +389,21 @@ public class DataHandler implements EWrapper{
     public void openOrder(int orderId, Contract contract, Order order, OrderState orderState) {
         this.m_logger.log("openOrder(), orderId: " + orderId + " orderStatus.m_status: " + orderState.m_status + " order.m_orderId: " + order.m_orderId);
 
+        // print out taking profit message trigger msg
+        if(orderState.m_status.compareTo("Filled") == 0) {
+            if(order.m_parentId > 0 && order.m_orderType.compareTo("LMT") == 0) {
+                // taking profit triggered
+                System.out.println("taking profit triggered at: " + order.m_lmtPrice);
+                m_logger.log("taking profit triggered at:"  + order.m_lmtPrice);
+                m_logger.log("profit is: " + 50 * 0.00001 * order.m_totalQuantity);
+                System.out.println("profit is: " + 50 * 0.00001 * order.m_totalQuantity);
+            }
+        }
 
         this.m_orderStates.put(orderId, orderState);
         this.m_orders.put(orderId, order);
         // update execution count
-        this.m_fisherBot.updateStopLossExecutionCount();
+        this.m_fisherBot.updateOrderExecution();
 
         System.out.println("m_orderStates.size(): " + m_orderStates.size());
         System.out.println("m_orders.size(): " + m_orders.size());

@@ -2,22 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="09d32302-5fbd-4b19-b5c3-191d54f4a892" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/fisher_bot/com/fisher/BotDataPlotter.class" afterPath="$PROJECT_DIR$/out/production/fisher_bot/com/fisher/BotDataPlotter.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/fisher_bot/com/fisher/DataHandler.class" afterPath="$PROJECT_DIR$/out/production/fisher_bot/com/fisher/DataHandler.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/fisher_bot/com/fisher/FileLogger.class" afterPath="$PROJECT_DIR$/out/production/fisher_bot/com/fisher/FileLogger.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/fisher_bot/com/fisher/FisherBot.class" afterPath="$PROJECT_DIR$/out/production/fisher_bot/com/fisher/FisherBot.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/fisher_bot/com/fisher/mainFrame$1.class" afterPath="$PROJECT_DIR$/out/production/fisher_bot/com/fisher/mainFrame$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/fisher_bot/com/fisher/mainFrame$2.class" afterPath="$PROJECT_DIR$/out/production/fisher_bot/com/fisher/mainFrame$2.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/fisher_bot/com/fisher/mainFrame$3.class" afterPath="$PROJECT_DIR$/out/production/fisher_bot/com/fisher/mainFrame$3.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/fisher_bot/com/fisher/mainFrame.class" afterPath="$PROJECT_DIR$/out/production/fisher_bot/com/fisher/mainFrame.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/fisher/BotDataPlotter.java" afterPath="$PROJECT_DIR$/src/com/fisher/BotDataPlotter.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/fisher/DataHandler.java" afterPath="$PROJECT_DIR$/src/com/fisher/DataHandler.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/fisher/FileLogger.java" afterPath="$PROJECT_DIR$/src/com/fisher/FileLogger.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/fisher/FisherBot.java" afterPath="$PROJECT_DIR$/src/com/fisher/FisherBot.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/fisher/mainFrame.java" afterPath="$PROJECT_DIR$/src/com/fisher/mainFrame.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/fisher_bot/com/fisher/mainFrame.jfd" afterPath="$PROJECT_DIR$/out/production/fisher_bot/com/fisher/mainFrame.jfd" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/fisher/mainFrame.jfd" afterPath="$PROJECT_DIR$/src/com/fisher/mainFrame.jfd" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="fisher_bot.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -39,50 +26,26 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="DataHandler.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="DataHandler.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/fisher/DataHandler.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-13.259259">
-              <caret line="396" column="42" selection-start-line="396" selection-start-column="42" selection-end-line="396" selection-end-column="42" />
+            <state vertical-scroll-proportion="-2.4862888">
+              <caret line="386" column="0" selection-start-line="386" selection-start-column="0" selection-end-line="386" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#18483#18484#0" expanded="true" />
-                <element signature="e#18560#18561#0" expanded="true" />
+                <element signature="e#19048#19049#0" expanded="true" />
+                <element signature="e#19125#19126#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ApiDemo.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/apidemo/ApiDemo.java">
+      <file leaf-file-name="TestHandler.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/fisher/TestHandler.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="124" column="38" selection-start-line="124" selection-start-column="38" selection-end-line="124" selection-end-column="38" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ApiController.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/ib/controller/ApiController.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-6.4074073">
-              <caret line="43" column="36" selection-start-line="43" selection-start-column="18" selection-end-line="43" selection-end-column="36" />
+              <caret line="143" column="0" selection-start-line="143" selection-start-column="0" selection-end-line="143" selection-end-column="0" />
               <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="FileLogger.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/fisher/FileLogger.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="46" column="59" selection-start-line="46" selection-start-column="59" selection-end-line="46" selection-end-column="59" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
             </state>
           </provider>
         </entry>
@@ -106,7 +69,7 @@
         <entry file="file://$PROJECT_DIR$/src/com/fisher/BotDataPlotter.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="165" column="48" selection-start-line="165" selection-start-column="48" selection-end-line="165" selection-end-column="48" />
+              <caret line="165" column="62" selection-start-line="165" selection-start-column="62" selection-end-line="165" selection-end-column="62" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -114,52 +77,29 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DataTank.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/fisher/DataTank.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="61" column="0" selection-start-line="61" selection-start-column="0" selection-end-line="61" selection-end-column="0" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="TextAreaLogger.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/fisher/TextAreaLogger.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="24" column="0" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="FisherBot.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="FisherBot.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/fisher/FisherBot.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.69835466">
-              <caret line="305" column="17" selection-start-line="305" selection-start-column="17" selection-end-line="305" selection-end-column="17" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="272" column="8" selection-start-line="272" selection-start-column="8" selection-end-line="272" selection-end-column="8" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#3040#3041#0" expanded="true" />
-                <element signature="e#3105#3106#0" expanded="true" />
-                <element signature="method#buy#0;class#FisherBot#0" expanded="false" />
-                <element signature="method#sell#0;class#FisherBot#0" expanded="false" />
-                <element signature="method#closeAllPosition#0;class#FisherBot#0" expanded="false" />
-                <element signature="method#processStopLossOrder#0;class#FisherBot#0" expanded="false" />
+                <element signature="e#4949#4950#0" expanded="true" />
+                <element signature="e#5014#5015#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="mainFrame.jfd" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/fisher/mainFrame.jfd">
-          <provider selected="true" editor-type-id="JFormDesigner">
-            <state />
+      <file leaf-file-name="FileLogger.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/fisher/FileLogger.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="49" column="16" selection-start-line="49" selection-start-column="16" selection-end-line="49" selection-end-column="16" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
           </provider>
         </entry>
       </file>
@@ -208,8 +148,8 @@
         <option value="$PROJECT_DIR$/src/com/fisher/mainFrame.java" />
         <option value="$PROJECT_DIR$/src/com/fisher/mainFrame.jfd" />
         <option value="$PROJECT_DIR$/src/com/fisher/FileLogger.java" />
-        <option value="$PROJECT_DIR$/src/com/fisher/DataHandler.java" />
         <option value="$PROJECT_DIR$/src/com/fisher/FisherBot.java" />
+        <option value="$PROJECT_DIR$/src/com/fisher/DataHandler.java" />
       </list>
     </option>
   </component>
@@ -226,7 +166,7 @@
   <component name="ProjectFrameBounds">
     <option name="x" value="7" />
     <option name="y" value="23" />
-    <option name="width" value="1287" />
+    <option name="width" value="1160" />
     <option name="height" value="813" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
@@ -584,7 +524,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="7" y="23" width="1287" height="813" extended-state="0" />
+    <frame x="7" y="23" width="1160" height="813" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -592,17 +532,17 @@
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32822084" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24955277" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3977505" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.23994452" sideWeight="0.4248742" order="11" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.19626169" sideWeight="0.50729924" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32822084" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4235808" sideWeight="0.48707592" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.42302358" sideWeight="0.48707592" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32822084" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21445782" sideWeight="0.49270073" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.23881932" sideWeight="0.49270073" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.20249653" sideWeight="0.5751258" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -670,8 +610,8 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#18483#18484#0" expanded="true" />
-            <element signature="e#18560#18561#0" expanded="true" />
+            <element signature="e#19048#19049#0" expanded="true" />
+            <element signature="e#19125#19126#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -705,8 +645,8 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#18483#18484#0" expanded="true" />
-            <element signature="e#18560#18561#0" expanded="true" />
+            <element signature="e#19048#19049#0" expanded="true" />
+            <element signature="e#19125#19126#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -725,8 +665,8 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#18483#18484#0" expanded="true" />
-            <element signature="e#18560#18561#0" expanded="true" />
+            <element signature="e#19048#19049#0" expanded="true" />
+            <element signature="e#19125#19126#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -842,13 +782,6 @@
         <state vertical-scroll-proportion="-0.9653846">
           <caret line="1979" column="47" selection-start-line="1979" selection-start-column="47" selection-end-line="1979" selection-end-column="47" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/fisher/TestHandler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="143" column="0" selection-start-line="143" selection-start-column="0" selection-end-line="143" selection-end-column="0" />
         </state>
       </provider>
     </entry>
@@ -972,16 +905,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/fisher/DataTank.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="61" column="0" selection-start-line="61" selection-start-column="0" selection-end-line="61" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="jar:///Library/Java/JavaVirtualMachines/jdk1.8.0_25.jdk/Contents/Home/src.zip!/javax/swing/RepaintManager.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="1.2755905">
@@ -990,19 +913,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/fisher/TextAreaLogger.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="24" column="0" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/ib/controller/ApiController.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-6.4074073">
+        <state vertical-scroll-proportion="0.3326923">
           <caret line="43" column="36" selection-start-line="43" selection-start-column="18" selection-end-line="43" selection-end-column="36" />
           <folding />
         </state>
@@ -1010,8 +923,36 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/apidemo/ApiDemo.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
+        <state vertical-scroll-proportion="0.36563072">
           <caret line="124" column="38" selection-start-line="124" selection-start-column="38" selection-end-line="124" selection-end-column="38" />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/fisher/TestHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="143" column="0" selection-start-line="143" selection-start-column="0" selection-end-line="143" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/fisher/TextAreaLogger.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.6032907">
+          <caret line="24" column="0" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/fisher/DataTank.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.5886654">
+          <caret line="61" column="0" selection-start-line="61" selection-start-column="0" selection-end-line="61" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -1021,7 +962,7 @@
     <entry file="file://$PROJECT_DIR$/src/com/fisher/FileLogger.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="46" column="59" selection-start-line="46" selection-start-column="59" selection-end-line="46" selection-end-column="59" />
+          <caret line="49" column="16" selection-start-line="49" selection-start-column="16" selection-end-line="49" selection-end-column="16" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -1031,37 +972,33 @@
     <entry file="file://$PROJECT_DIR$/src/com/fisher/BotDataPlotter.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="165" column="48" selection-start-line="165" selection-start-column="48" selection-end-line="165" selection-end-column="48" />
+          <caret line="165" column="62" selection-start-line="165" selection-start-column="62" selection-end-line="165" selection-end-column="62" />
           <folding>
             <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/fisher/DataHandler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-13.259259">
-          <caret line="396" column="42" selection-start-line="396" selection-start-column="42" selection-end-line="396" selection-end-column="42" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#18483#18484#0" expanded="true" />
-            <element signature="e#18560#18561#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/fisher/FisherBot.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.69835466">
-          <caret line="305" column="17" selection-start-line="305" selection-start-column="17" selection-end-line="305" selection-end-column="17" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="272" column="8" selection-start-line="272" selection-start-column="8" selection-end-line="272" selection-end-column="8" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#3040#3041#0" expanded="true" />
-            <element signature="e#3105#3106#0" expanded="true" />
-            <element signature="method#buy#0;class#FisherBot#0" expanded="false" />
-            <element signature="method#sell#0;class#FisherBot#0" expanded="false" />
-            <element signature="method#closeAllPosition#0;class#FisherBot#0" expanded="false" />
-            <element signature="method#processStopLossOrder#0;class#FisherBot#0" expanded="false" />
+            <element signature="e#4949#4950#0" expanded="true" />
+            <element signature="e#5014#5015#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/fisher/DataHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-2.4862888">
+          <caret line="386" column="0" selection-start-line="386" selection-start-column="0" selection-end-line="386" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#19048#19049#0" expanded="true" />
+            <element signature="e#19125#19126#0" expanded="true" />
           </folding>
         </state>
       </provider>

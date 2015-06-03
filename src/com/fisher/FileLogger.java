@@ -72,8 +72,6 @@ public class FileLogger implements ILogger {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
     }
 
 }
