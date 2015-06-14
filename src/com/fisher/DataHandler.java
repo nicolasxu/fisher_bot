@@ -222,7 +222,7 @@ public class DataHandler implements EWrapper{
                 this.m_fisherBot.calculate();
 
                 // then decide also
-                this.m_fisherBot.decide();
+                //this.m_fisherBot.decide();
 
                 // reset the flag
                 if(this.m_newAskPrice == true) {

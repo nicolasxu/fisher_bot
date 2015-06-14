@@ -61,8 +61,8 @@ public class FisherBot implements IBot {
         this.m_lossInPoint = 0;
 
         // init filters
-        this.m_ssFilter = new SuperSmootherFilter(10);
-        this.m_fisherFilter = new FisherFilter(15);
+        this.m_ssFilter = new SuperSmootherFilter(1);
+        this.m_fisherFilter = new FisherFilter(5);
         this.m_stdFilter = new StdFilter(8);
 
         // init value
@@ -81,7 +81,7 @@ public class FisherBot implements IBot {
 
         this.m_initialLotSize = 100000; // 100k, 1 lot
         this.m_currentLotSize = this.m_initialLotSize;
-        this.m_initialProfitSize = 50 * 0.00001;
+        this.m_initialProfitSize = 15 * 0.00001;
         this.m_profitSize = m_initialProfitSize;
         this.m_lowest = 4;
         this.m_highest = 0;
@@ -242,6 +242,15 @@ public class FisherBot implements IBot {
         stopLossOrder.m_action = "SELL";
         stopLossOrder.m_orderType = "STP";
         stopLossOrder.m_auxPrice = this.roundTo5(this.m_lowest);
+
+        if(parentOrder.m_lmtPrice - stopLossOrder.m_auxPrice > 200 * 0.00001) {
+            stopLossOrder.m_auxPrice = parentOrder.m_lmtPrice - 200 * 0.00001;
+        }
+        if(parentOrder.m_lmtPrice - stopLossOrder.m_auxPrice < 100 * 0.00001) {
+            stopLossOrder.m_auxPrice = parentOrder.m_lmtPrice - 100 * 0.00001;
+
+        }
+
         System.out.println("stopLossOrder.m_auxPrice: " + stopLossOrder.m_auxPrice);
         stopLossOrder.m_transmit = true;
         stopLossOrder.m_tif = "GTC";
@@ -308,6 +317,16 @@ public class FisherBot implements IBot {
         stopLossOrder.m_action = "BUY";
         stopLossOrder.m_orderType = "STP";
         stopLossOrder.m_auxPrice = this.roundTo5(this.m_highest);
+
+        if(stopLossOrder.m_auxPrice - parentOrder.m_lmtPrice  > 200 * 0.00001) {
+            stopLossOrder.m_auxPrice = parentOrder.m_lmtPrice + 200 * 0.00001;
+        }
+        if(stopLossOrder.m_auxPrice - parentOrder.m_lmtPrice   < 100 * 0.00001) {
+            stopLossOrder.m_auxPrice = parentOrder.m_lmtPrice + 100 * 0.00001;
+
+        }
+
+
         stopLossOrder.m_transmit = true;
         stopLossOrder.m_tif = "GTC";
         stopLossOrder.m_totalQuantity = parentOrder.m_totalQuantity;
