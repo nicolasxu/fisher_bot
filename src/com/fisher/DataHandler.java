@@ -1,6 +1,8 @@
 package com.fisher;
 
+import apidemo.ApiDemo;
 import com.ib.client.*;
+import com.ib.controller.AccountSummaryTag;
 import com.ib.controller.Bar;
 
 import java.text.DateFormat;
@@ -47,6 +49,11 @@ public class DataHandler implements EWrapper{
     public HashMap<Integer, Order> m_orders;
     public HashMap<Integer, OrderState> m_orderStates;
     public ArrayList<Double> m_stopLossOrderIds;
+    public ArrayList<Execution> m_executions;
+
+    public int m_position;
+    public double m_avgPositionCost;
+    public double m_lastEmptyPosAccountValue;
 
 
 
@@ -98,6 +105,11 @@ public class DataHandler implements EWrapper{
 
         this.m_newBarFlag = false;
 
+        this.m_executions = new ArrayList<Execution>();
+
+        this.m_position = 0;
+        this.m_avgPositionCost = 0;
+        this.m_lastEmptyPosAccountValue = 0.0;
 
     }
 
@@ -155,13 +167,13 @@ public class DataHandler implements EWrapper{
         this.m_request.reqPositions();
 
 
+
     }
 
     public void handleNew5minBar(long time) {
         // if new bar, create one and append it to m_bars
 
         if(this.m_newBidPrice || this.m_newAskPrice) {
-
 
             double current5minCount =  Math.floor(time / (60 * 5));
             double prev5minCount = Math.floor(this.m_currentServerTime / (60 * 5));
@@ -222,7 +234,7 @@ public class DataHandler implements EWrapper{
                 this.m_fisherBot.calculate();
 
                 // then decide also
-                //this.m_fisherBot.decide();
+                this.m_fisherBot.decide();
 
                 // reset the flag
                 if(this.m_newAskPrice == true) {
@@ -300,6 +312,36 @@ public class DataHandler implements EWrapper{
         this.m_medians.set(lastIndex, lastBar.close() );
 
 
+        // test
+        /*
+        if(testBuyOrderSent == false) {
+
+            this.m_request.reqAccountSummary(this.m_reqId++, "All", "TotalCashValue");
+            this.m_fisherBot.buy();
+
+            class CloseAll extends TimerTask {
+
+
+
+                @Override
+                public void run() {
+                    System.out.println("test closing all position...");
+                    m_fisherBot.closePosition();
+                }
+            }
+            TimerTask theTask = new CloseAll();
+            Timer theTimer = new Timer();
+            //theTimer.schedule(theTask, 5*1000, 10*1000);
+            theTimer.schedule(theTask, 5*1000);
+            testBuyOrderSent = true;
+
+        }
+        */
+
+
+        // end of test
+
+
     }
 
 
@@ -332,10 +374,7 @@ public class DataHandler implements EWrapper{
                 this.m_newAskPrice = true;
 
 
-//                if(testBuyOrderSent == false) {
-//                    this.m_fisherBot.buy();
-//                    this.testBuyOrderSent = true;
-//                }
+
 
 
 
@@ -405,8 +444,8 @@ public class DataHandler implements EWrapper{
         // update execution count
         this.m_fisherBot.updateOrderExecution();
 
-        System.out.println("m_orderStates.size(): " + m_orderStates.size());
-        System.out.println("m_orders.size(): " + m_orders.size());
+        //System.out.println("m_orderStates.size(): " + m_orderStates.size());
+        //System.out.println("m_orders.size(): " + m_orders.size());
     }
 
     @Override
@@ -465,6 +504,20 @@ public class DataHandler implements EWrapper{
 
     @Override
     public void execDetails(int reqId, Contract contract, Execution execution) {
+        // This method is called when the reqExecutions() method is invoked, or when an order is filled.
+
+        if(contract.m_symbol.compareTo(this.m_contract.m_symbol) != 0) {
+            // if not "EUR", don't do nothing.
+            return;
+        }
+
+
+
+        this.m_executions.add(execution);
+        System.out.println("ExecDetails() - " + "reqId: "+reqId + " side: " + execution.m_side + " " + execution.m_avgPrice);
+
+        // find out loss in points in EUR/USD
+        this.m_fisherBot.findOutLoss();
 
     }
 
@@ -544,6 +597,9 @@ public class DataHandler implements EWrapper{
             this.m_appPlotter.updatePlotData();
 
             this.requestLiveData();
+            this.m_request.reqAccountSummary(this.m_reqId++, "All", "TotalCashValue");
+
+
         }
 
     }
@@ -610,9 +666,23 @@ public class DataHandler implements EWrapper{
 
     @Override
     public void position(String account, Contract contract, int pos, double avgCost) {
+        //System.out.println("position() pos: " + pos);
+        //System.out.println("position() - contract.m_symbol: "+ contract.m_symbol);
         if(contract.m_symbol.compareTo("EUR") == 0) {
+            System.out.println("position() - found \"EUR\": " + pos);
             this.m_logger.log("position is: " + pos + " for contract: " + contract.m_symbol);
+            this.m_position = pos;
+            this.m_avgPositionCost = avgCost;
+
+            if(pos == 0) {
+                // all position is liquidated, request summary for "SettledCash"
+                //System.out.println("requesting account summary... in position()...");
+                //this.m_request.reqAccountSummary(this.m_reqId++, "All", "TotalCashValue");
+
+            }
         }
+
+
 
 
     }
@@ -624,7 +694,34 @@ public class DataHandler implements EWrapper{
 
     @Override
     public void accountSummary(int reqId, String account, String tag, String value, String currency) {
+        System.out.println("accountSummary() - triggered");
+        if(tag.compareTo("TotalCashValue") == 0 && this.m_position == 0) {
+            // only run this when all positions are closed
+            System.out.println("TotalCashValue: " + value);
+            double currentValue = Double.parseDouble(value);
+            if(this.m_lastEmptyPosAccountValue !=0) {
+                // last value is valid
+                System.out.println("lastSettledCash: " + this.m_lastEmptyPosAccountValue + " current Settled Cash: " + currentValue);
+                double diff = currentValue - this.m_lastEmptyPosAccountValue;
+                if(diff > 0) {
+                    System.out.println("making money: " + diff);
+                    this.m_fisherBot.calculateNextPosition(diff);
+                    this.m_lastEmptyPosAccountValue = currentValue;
+                } else {
+                    System.out.println("lossing money: " + diff);
+                    // calculate next order size e.g.:
+                    this.m_fisherBot.calculateNextPosition(diff);
 
+                }
+
+                this.m_fisherBot.buyOrSell();
+
+            } else {
+                // value is not valid, probably start up
+                this.m_lastEmptyPosAccountValue = currentValue;
+            }
+
+        }
     }
 
     @Override

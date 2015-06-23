@@ -1,5 +1,6 @@
 package com.fisher;
 
+import com.ib.client.Execution;
 import com.ib.client.Order;
 import com.ib.client.OrderState;
 import com.ib.controller.Bar;
@@ -31,6 +32,7 @@ public class FisherBot implements IBot {
 
     public int m_initialLotSize;
     public int m_currentLotSize;
+    public int m_nextOrderQuantity;
     public double m_profitSize;
     public double m_initialProfitSize;
 
@@ -49,8 +51,12 @@ public class FisherBot implements IBot {
     public int m_lossInPoint;
     public String m_filePath;
     public String m_lossFileName;
+    public ArrayList<Integer> m_closePositionOrders; // contains order of all close position orders,
+                                                     // added in closePosition()
 
     public ILogger logger;
+    public boolean m_buyFlag;
+    public boolean m_sellFlag;
 
     public FisherBot(DataHandler handler, ArrayList<Bar> bars, ILogger logger) {
         this.m_dataHandler = handler;
@@ -80,21 +86,27 @@ public class FisherBot implements IBot {
         this.logger = handler.m_logger;
 
         this.m_initialLotSize = 100000; // 100k, 1 lot
+        this.m_nextOrderQuantity = this.m_initialLotSize;
         this.m_currentLotSize = this.m_initialLotSize;
-        this.m_initialProfitSize = 15 * 0.00001;
+        this.m_initialProfitSize = 50 * 0.00001;
         this.m_profitSize = m_initialProfitSize;
         this.m_lowest = 4;
         this.m_highest = 0;
+        this.m_closePositionOrders = new ArrayList<Integer>();
 
         this.m_thisBarBought = false;
         this.m_thisBarSold   = false;
         this.m_filePath = "/Users/nick/documents/fisher/";
         this.m_lossFileName = "lossPoint.log";
 
+        this.m_buyFlag  = false;
+        this.m_sellFlag = false;
+
         this.loadLossPoints();
 
-    }
 
+
+    }
     int calculateNextOrderQuantity() {
 
         int possibleQuantity = (int)(this.m_lossInPoint / this.m_profitSize);
@@ -112,9 +124,7 @@ public class FisherBot implements IBot {
         }
 
     }
-
     public void loadLossPoints() {
-
 
         FileReader fReader;
         BufferedReader bReader;
@@ -154,7 +164,6 @@ public class FisherBot implements IBot {
         }
 
     }
-
     public void updateClose() {
 
         for (int i = Math.max(0, m_closes.size() - 1 ); i < m_inputBars.size(); i ++) {
@@ -166,16 +175,6 @@ public class FisherBot implements IBot {
             }
         }
     }
-
-    public void updateOpen() {
-        ArrayList<Double> opens = new ArrayList<Double>();
-    }
-
-    public void updateMedian() {
-
-    }
-
-
     public double roundTo5 (double input) {
         // 1.14042 => 1.14040
         double point = 0.00001;
@@ -183,26 +182,63 @@ public class FisherBot implements IBot {
         double number = Math.round(input / point / 5) * 5 * point;
         return number;
     }
+    public void closePosition() {
+        if(this.m_dataHandler.m_position == 0 ) {
+            this.m_dataHandler.m_request.reqGlobalCancel();
+            System.out.println("cancel order globally");
+            return;
+        }
+        this.m_dataHandler.m_request.reqGlobalCancel();
+        System.out.println("cancel order globally");
+
+        // cancel all pending orders globally.
+        Order closeOrder = new Order();
+        closeOrder.m_clientId = this.m_dataHandler.m_clientId;
+        closeOrder.m_orderType = "MKT";
+        closeOrder.m_transmit = true;
+        closeOrder.m_totalQuantity = Math.abs(this.m_dataHandler.m_position);
+
+
+
+        if(this.m_dataHandler.m_position > 0) {
+            closeOrder.m_action = "SELL";
+
+
+        }
+
+        if(this.m_dataHandler.m_position < 0) {
+            closeOrder.m_action = "BUY";
+        }
+        int orderId = this.m_dataHandler.m_reqId++;
+        this.m_dataHandler.m_request.placeOrder(orderId, this.m_dataHandler.m_contract, closeOrder);
+        // add order id to this collection
+        this.m_closePositionOrders.add(orderId);
+
+    }
+    public void buy_v2() {
+        //
+    }
+    public void sell_v2() {
+
+    }
+    public void buyOrSell() {
+        if (this.m_buyFlag == true) {
+            // buy
+            this.buy();
+            this.m_buyFlag = false;
+        }
+
+        if(this.m_sellFlag == true) {
+            // sell
+            this.sell();
+            this.m_sellFlag = false;
+        }
+    }
     public void buy() {
         // buy at current ask price with 50 points take profit
-        int quantity;
-        double profitSize;
 
-
-        if( this.m_lossInPoint > 0) {
-            // there is a loss
-
-            quantity = this.calculateNextOrderQuantity();
-            profitSize = this.m_initialProfitSize;
-
-
-        } else {
-            // no loss, use initial size
-            quantity = this.m_initialLotSize;
-            profitSize = this.m_initialProfitSize;
-        }
-        logger.log("buying amount: " + quantity);
-
+        logger.log("buying amount: " + m_nextOrderQuantity);
+        System.out.println("buying amount: " + m_nextOrderQuantity);
         Order parentOrder = new Order();
         parentOrder.m_clientId    = this.m_dataHandler.m_clientId;
         //parentOrder.m_orderId is not used
@@ -213,7 +249,7 @@ public class FisherBot implements IBot {
         parentOrder.m_goodTillDate = this.m_dataHandler.toTimeString(this.m_dataHandler.m_currentServerTime + 5 * 60);
         parentOrder.m_lmtPrice    = this.roundTo5(this.m_dataHandler.m_currentAskPrice);
         logger.log("current ask price: " + this.m_dataHandler.m_currentAskPrice);
-        parentOrder.m_totalQuantity = quantity;
+        parentOrder.m_totalQuantity = m_nextOrderQuantity;
         int parentOrderId = this.m_dataHandler.m_reqId++;
         // placing order
         m_dataHandler.m_request.placeOrder(parentOrderId, this.m_dataHandler.m_contract, parentOrder);
@@ -230,7 +266,7 @@ public class FisherBot implements IBot {
         takeProfitOrder.m_tif         = "GTC";
 
         takeProfitOrder.m_auxPrice  = 0;
-        takeProfitOrder.m_lmtPrice  = parentOrder.m_lmtPrice + profitSize;
+        takeProfitOrder.m_lmtPrice  = parentOrder.m_lmtPrice + m_initialProfitSize;
         System.out.println("takeProfitOrder.m_lmtPrice: " + takeProfitOrder.m_lmtPrice);
         takeProfitOrder.m_totalQuantity = parentOrder.m_totalQuantity;
         m_dataHandler.m_request.placeOrder(m_dataHandler.m_reqId++, m_dataHandler.m_contract, takeProfitOrder);
@@ -243,13 +279,7 @@ public class FisherBot implements IBot {
         stopLossOrder.m_orderType = "STP";
         stopLossOrder.m_auxPrice = this.roundTo5(this.m_lowest);
 
-        if(parentOrder.m_lmtPrice - stopLossOrder.m_auxPrice > 200 * 0.00001) {
-            stopLossOrder.m_auxPrice = parentOrder.m_lmtPrice - 200 * 0.00001;
-        }
-        if(parentOrder.m_lmtPrice - stopLossOrder.m_auxPrice < 100 * 0.00001) {
-            stopLossOrder.m_auxPrice = parentOrder.m_lmtPrice - 100 * 0.00001;
 
-        }
 
         System.out.println("stopLossOrder.m_auxPrice: " + stopLossOrder.m_auxPrice);
         stopLossOrder.m_transmit = true;
@@ -260,26 +290,10 @@ public class FisherBot implements IBot {
         // TODO: reset the order quantity if it is more than the initial quantity
 
     }
-
     public void sell() {
 
-        int quantity;
-        double profitSize;
 
-
-        if( this.m_lossInPoint > 0) {
-            // there is a loss
-
-            quantity = this.calculateNextOrderQuantity();
-            profitSize = this.m_initialProfitSize;
-
-
-        } else {
-            // no loss, use initial size
-            quantity = this.m_initialLotSize;
-            profitSize = this.m_initialProfitSize;
-        }
-        logger.log("selling amount: " + quantity);
+        logger.log("selling amount: " + m_nextOrderQuantity);
 
         Order parentOrder = new Order();
         parentOrder.m_clientId = this.m_dataHandler.m_clientId;
@@ -290,7 +304,7 @@ public class FisherBot implements IBot {
         parentOrder.m_goodTillDate = this.m_dataHandler.toTimeString(this.m_dataHandler.m_currentServerTime + 5 * 60);
         parentOrder.m_lmtPrice    = this.roundTo5(this.m_dataHandler.m_currentBidPrice);
         logger.log("current bid price: " + this.m_dataHandler.m_currentBidPrice);
-        parentOrder.m_totalQuantity = quantity;
+        parentOrder.m_totalQuantity = m_nextOrderQuantity;
         int parentOrderId = this.m_dataHandler.m_reqId++;
         // place order
         m_dataHandler.m_request.placeOrder(parentOrderId, this.m_dataHandler.m_contract, parentOrder);
@@ -305,7 +319,7 @@ public class FisherBot implements IBot {
         takeProfitOrder.m_transmit  = false;
         takeProfitOrder.m_tif         = "GTC";
         takeProfitOrder.m_auxPrice  = 0;
-        takeProfitOrder.m_lmtPrice  = parentOrder.m_lmtPrice - profitSize;
+        takeProfitOrder.m_lmtPrice  = parentOrder.m_lmtPrice - m_initialProfitSize;
         takeProfitOrder.m_totalQuantity = parentOrder.m_totalQuantity;
         m_dataHandler.m_request.placeOrder(m_dataHandler.m_reqId++, m_dataHandler.m_contract, takeProfitOrder);
 
@@ -318,14 +332,6 @@ public class FisherBot implements IBot {
         stopLossOrder.m_orderType = "STP";
         stopLossOrder.m_auxPrice = this.roundTo5(this.m_highest);
 
-        if(stopLossOrder.m_auxPrice - parentOrder.m_lmtPrice  > 200 * 0.00001) {
-            stopLossOrder.m_auxPrice = parentOrder.m_lmtPrice + 200 * 0.00001;
-        }
-        if(stopLossOrder.m_auxPrice - parentOrder.m_lmtPrice   < 100 * 0.00001) {
-            stopLossOrder.m_auxPrice = parentOrder.m_lmtPrice + 100 * 0.00001;
-
-        }
-
 
         stopLossOrder.m_transmit = true;
         stopLossOrder.m_tif = "GTC";
@@ -335,11 +341,6 @@ public class FisherBot implements IBot {
         // TODO: reset the order quantity if it is more than the initial quantity
 
     }
-
-    public void closeAllPosition() {
-
-    }
-
     public void findPastLowHigh () {
         int period = 10;
 
@@ -417,8 +418,6 @@ public class FisherBot implements IBot {
         this.saveLossPoints();
         logger.log("loss in points: " + loss);
     }
-
-
     public void processStopLossOrder() {
         // this function should be executed after findStopLossOrders()
         // go through this.m_m_stopLossOrderTriggered
@@ -445,7 +444,6 @@ public class FisherBot implements IBot {
             }
         }
     }
-
     public void updateOrderExecution() {
         //this.m_dataHandler.m_orderStates
         // 1. check if stoploss get more
@@ -455,6 +453,40 @@ public class FisherBot implements IBot {
 
     }
 
+    public void findOutLoss() {
+        // new
+        // triggered in data handler execDetails()
+        // calculate loss, if any, in EURUSD points
+        int index = this.m_dataHandler.m_executions.size() - 1;
+        if (index < 0) {
+            // m_exections is empty
+            return;
+        }
+        Execution lastExec = this.m_dataHandler.m_executions.get(index);
+        boolean isCloseOrder = false;
+        for(int i = 0; i < this.m_closePositionOrders.size(); i++) {
+            if(this.m_closePositionOrders.get(i) == lastExec.m_orderId) {
+                isCloseOrder = true;
+            }
+        }
+
+        if(isCloseOrder) {
+            // till this point, the close position order is successfully executed
+
+        }
+    }
+
+    public void calculateNextPosition(double diff) {
+        if(diff >= 0) {
+            // making money
+            this.m_nextOrderQuantity = this.m_initialLotSize;
+
+        } else {
+            // losing money
+            this.m_nextOrderQuantity = this.m_initialLotSize + (int)Math.round(-diff / (m_initialProfitSize) );
+        }
+        System.out.println("m_nextOrderQuantity: " + m_nextOrderQuantity);
+    }
 
     public void calculate() {
 
@@ -485,7 +517,6 @@ public class FisherBot implements IBot {
         int fisherCount = this.m_fisher.size();
         fI = this.m_fisher.get(fisherCount - 1 );
 
-
         fIm1 = this.m_fisher.get(fisherCount - 2);
         fIm2 = this.m_fisher.get(fisherCount - 3);
         fIm3 = this.m_fisher.get(fisherCount - 4);
@@ -502,7 +533,16 @@ public class FisherBot implements IBot {
             if(m_thisBarBought == false ) {
                 logger.log("executing buying...");
                 logger.log("fIm2: " +fIm2+ " FIm1: "+fIm1 +"FI: "+ fI);
-                this.buy();
+                if(this.m_dataHandler.m_position != 0) {
+                    this.closePosition();
+                    this.m_buyFlag = true;
+                    logger.log("m_buyFlag = true");
+                } else {
+                    this.m_buyFlag = true;
+                    this.buyOrSell();
+                }
+
+
                 m_thisBarBought = true;
             }
         }
@@ -512,7 +552,15 @@ public class FisherBot implements IBot {
             if(m_thisBarSold == false) {
                 logger.log("executing selling...");
                 logger.log("fIm2: " +fIm2+ " FIm1: "+fIm1 +"FI: "+ fI);
-                this.sell();
+                if(this.m_dataHandler.m_position != 0.0) {
+                    this.closePosition();
+                    this.m_sellFlag = true;
+                } else {
+                    this.m_sellFlag = true;
+                    logger.log("m_sellFlag = true");
+                    this.buyOrSell();
+                }
+
                 m_thisBarSold = true;
             }
         }
