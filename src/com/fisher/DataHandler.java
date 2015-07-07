@@ -54,6 +54,8 @@ public class DataHandler implements EWrapper{
     public double m_lastEmptyPosAccountValue;
     public double m_priceDiff;
 
+    public int m_lastBarCount;
+
 
 
 
@@ -110,6 +112,7 @@ public class DataHandler implements EWrapper{
         this.m_avgPositionCost = 0;
         this.m_lastEmptyPosAccountValue = 0.0;
         this.m_priceDiff = 50 * 0.00001; // 50 points
+        this.m_lastBarCount = 0;
 
     }
 
@@ -171,6 +174,7 @@ public class DataHandler implements EWrapper{
     public void Build5minBar(long time) {
         // if new bar, create one and append it to m_bars,
         // if not new bar, update current bar based on the latest tick price
+        // Only build 5 min bars, no bot logic in this function
 
         if(this.m_newBidPrice || this.m_newAskPrice) {
 
@@ -193,11 +197,6 @@ public class DataHandler implements EWrapper{
                     // Add new Bar
                     this.m_bars.add(newBar);
                     this.m_fiveMinPrices.clear();
-
-                    // calculate
-                    //this.m_fisherBot.calculate();
-                    // decide
-                    //this.m_fisherBot.decide();
 
                     // reset new price flag
                     this.m_newBidPrice = false;
@@ -224,13 +223,7 @@ public class DataHandler implements EWrapper{
             } else {
                 // not a new bar
                 // update last bar, no new bar
-                this.handleTickPrice();
-
-                // just calculate
-                //this.m_fisherBot.calculate();
-
-                // then decide also
-                //this.m_fisherBot.decide();
+                this.updateCurrentBarHighLowPrice();
 
                 // reset the flag
                 if(this.m_newAskPrice == true) {
@@ -248,7 +241,7 @@ public class DataHandler implements EWrapper{
         }
     }
 
-    public double findMidPrice() {
+    public double findBidAskMidPrice() {
         // find mid price based on latest bid and ask
         double p1, p2, mid;
         if (m_currentAskPrice > 0) {
@@ -266,16 +259,14 @@ public class DataHandler implements EWrapper{
         return mid;
     }
 
-    public void handleTickPrice() {
+    public void updateCurrentBarHighLowPrice() {
         // always put data to last m_bars
 
         // 1. find the mid price
-        double bidAskMid = this.findMidPrice(); // from the current bid and ask price, not from bar high and low price
+        double bidAskMid = this.findBidAskMidPrice(); // from the current bid and ask price, not from bar high and low price
 
         // 2. add to temp price list
         this.m_fiveMinPrices.add(bidAskMid);
-
-
 
         // 3. find high and low
         double high = 0;
@@ -342,7 +333,7 @@ public class DataHandler implements EWrapper{
 
     @Override
     public void tickPrice(int tickerId, int field, double price, int canAutoExecute) {
-        // tickPrice() -> currentTime() -> Build5minBar() -> handleTickPrice()
+        // tickPrice() -> currentTime() -> Build5minBar() -> updateCurrentBarHighLowPrice()
 
         String fieldDesc = TickType.getField(field);
         //System.out.println(fieldDesc + ": " + price);
@@ -567,8 +558,12 @@ public class DataHandler implements EWrapper{
             DecimalFormat f = new DecimalFormat("0.00000");
             DateFormat df = new SimpleDateFormat("yyyyMMdd HH:mm:ss");  // yyyymmdd hh:mm:ss tmz
 
+            // **** call bot calculate() and decide() if needed when historical data is downloaded
+
             this.m_fisherBot.calculate();
             this.m_fisherBot.decide();
+
+            // ****
 
             // bind data to plotter
             this.m_appPlotter.setBarSource(this.m_bars);
@@ -610,6 +605,25 @@ public class DataHandler implements EWrapper{
     public void currentTime(long time) {
 
         this.Build5minBar(time);
+
+        if(this.m_lastBarCount == this.m_bars.size()) {
+            // still in current bar
+            // ****
+            // call bot.calculate()
+            // call bot.decide()
+            // ****
+        } else {
+            // new bar
+            // update new bar count
+            this.m_lastBarCount = this.m_bars.size();
+
+
+            // ****
+            // you can still call
+            // bot.calculate()
+            // bot.decide()
+            // ****
+        }
 
 
         // if 1st time, then set the string
