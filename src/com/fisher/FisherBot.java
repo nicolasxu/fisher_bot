@@ -7,9 +7,7 @@ import com.ib.controller.Bar;
 
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by nick on 5/2/15.
@@ -57,6 +55,10 @@ public class FisherBot implements IBot {
     public ILogger logger;
     public boolean m_buyFlag;
     public boolean m_sellFlag;
+    public int toCancelOrderId;
+    public boolean m_closingPosition;
+    public boolean m_sleeping;
+    public double m_lastDealPrice;
 
     public FisherBot(DataHandler handler, ArrayList<Bar> bars, ILogger logger) {
         this.m_dataHandler = handler;
@@ -67,7 +69,7 @@ public class FisherBot implements IBot {
         this.m_lossInPoint = 0;
 
         // init filters
-        this.m_ssFilter = new SuperSmootherFilter(1);
+        this.m_ssFilter = new SuperSmootherFilter(8);
         this.m_fisherFilter = new FisherFilter(5);
         this.m_stdFilter = new StdFilter(8);
 
@@ -101,6 +103,10 @@ public class FisherBot implements IBot {
 
         this.m_buyFlag  = false;
         this.m_sellFlag = false;
+        this.toCancelOrderId = 0;
+        this.m_closingPosition = false;
+        this.m_sleeping = false;
+        this.m_lastDealPrice = 0.0;
 
         this.loadLossPoints();
 
@@ -183,13 +189,26 @@ public class FisherBot implements IBot {
         return number;
     }
     public void closePosition() {
-        if(this.m_dataHandler.m_position == 0 ) {
-            this.m_dataHandler.m_request.reqGlobalCancel();
-            System.out.println("cancel order globally");
+        System.out.println("closePosition() - triggered");
+        if(this.m_closingPosition == true) {
+            System.out.println("closing position... no order sent in this call");
+            // if position is being closed right now, do nothing.
             return;
         }
-        this.m_dataHandler.m_request.reqGlobalCancel();
-        System.out.println("cancel order globally");
+
+
+        if(this.m_dataHandler.m_position == 0 ) {
+            //this.m_dataHandler.m_request.reqGlobalCancel();
+            this.m_dataHandler.m_request.cancelOrder(this.toCancelOrderId);
+            System.out.println("cancel order with when position 0, id: " + this.toCancelOrderId);
+            return;
+        }
+        this.m_closingPosition = true; // set the target, since reading the position takes time,
+        // we don't want to trigger another close position order meanwhile.
+
+        //this.m_dataHandler.m_request.reqGlobalCancel();
+        this.m_dataHandler.m_request.cancelOrder(this.toCancelOrderId);
+        System.out.println("cancel order with position("+ m_dataHandler.m_position+ "), id: " + this.toCancelOrderId);
 
         // cancel all pending orders globally.
         Order closeOrder = new Order();
@@ -210,34 +229,57 @@ public class FisherBot implements IBot {
             closeOrder.m_action = "BUY";
         }
         int orderId = this.m_dataHandler.m_reqId++;
+        System.out.println("closePosition() - Since right now the position is: " + m_dataHandler.m_position + " , placing "
+                + closeOrder.m_action+ " order with quantity: " + closeOrder.m_totalQuantity + " to close position");
         this.m_dataHandler.m_request.placeOrder(orderId, this.m_dataHandler.m_contract, closeOrder);
         // add order id to this collection
         this.m_closePositionOrders.add(orderId);
 
     }
-    public void buy_v2() {
-        //
-    }
-    public void sell_v2() {
+
+    public void sleep() {
+        this.m_sleeping = true;
+
+        class WakeUpTask extends TimerTask {
+
+            /**
+             * The action to be performed by this timer task.
+             */
+            @Override
+            public void run() {
+                System.out.println("waking up ...");
+                m_sleeping = false;
+
+            }
+        }
+        TimerTask theTask = new WakeUpTask();
+        Timer theTimer = new Timer();
+        theTimer.schedule(theTask, 100*1000); // delay 15 seconds
 
     }
+
     public void buyOrSell() {
         if (this.m_buyFlag == true) {
             // buy
             this.buy();
+            System.out.println("reset buy flag to false");
             this.m_buyFlag = false;
+            this.sleep();
         }
 
         if(this.m_sellFlag == true) {
             // sell
             this.sell();
             this.m_sellFlag = false;
+            System.out.println("reset sell flag to false");
+            this.sleep();
+
         }
     }
     public void buy() {
         // buy at current ask price with 50 points take profit
 
-        logger.log("buying amount: " + m_nextOrderQuantity);
+        logger.log("buy() triggered - executing buying amount: " + m_nextOrderQuantity);
         System.out.println("buying amount: " + m_nextOrderQuantity);
         Order parentOrder = new Order();
         parentOrder.m_clientId    = this.m_dataHandler.m_clientId;
@@ -248,6 +290,7 @@ public class FisherBot implements IBot {
         parentOrder.m_tif         = "GTD";
         parentOrder.m_goodTillDate = this.m_dataHandler.toTimeString(this.m_dataHandler.m_currentServerTime + 5 * 60);
         parentOrder.m_lmtPrice    = this.roundTo5(this.m_dataHandler.m_currentAskPrice);
+        this.m_lastDealPrice = parentOrder.m_lmtPrice;
         logger.log("current ask price: " + this.m_dataHandler.m_currentAskPrice);
         parentOrder.m_totalQuantity = m_nextOrderQuantity;
         int parentOrderId = this.m_dataHandler.m_reqId++;
@@ -269,7 +312,9 @@ public class FisherBot implements IBot {
         takeProfitOrder.m_lmtPrice  = parentOrder.m_lmtPrice + m_initialProfitSize;
         System.out.println("takeProfitOrder.m_lmtPrice: " + takeProfitOrder.m_lmtPrice);
         takeProfitOrder.m_totalQuantity = parentOrder.m_totalQuantity;
-        m_dataHandler.m_request.placeOrder(m_dataHandler.m_reqId++, m_dataHandler.m_contract, takeProfitOrder);
+        int tpOrderId = m_dataHandler.m_reqId++;
+        this.toCancelOrderId = tpOrderId;
+        m_dataHandler.m_request.placeOrder(tpOrderId, m_dataHandler.m_contract, takeProfitOrder);
 
         // stop loss order
         Order stopLossOrder = new Order();
@@ -287,13 +332,15 @@ public class FisherBot implements IBot {
         stopLossOrder.m_totalQuantity = parentOrder.m_totalQuantity;
         m_dataHandler.m_request.placeOrder(m_dataHandler.m_reqId++, m_dataHandler.m_contract, stopLossOrder);
 
+        this.m_thisBarBought = true;
+        this.m_thisBarSold   = false;
         // TODO: reset the order quantity if it is more than the initial quantity
 
     }
     public void sell() {
 
 
-        logger.log("selling amount: " + m_nextOrderQuantity);
+        logger.log("sell() triggered - execute selling amount: " + m_nextOrderQuantity);
 
         Order parentOrder = new Order();
         parentOrder.m_clientId = this.m_dataHandler.m_clientId;
@@ -303,6 +350,7 @@ public class FisherBot implements IBot {
         parentOrder.m_tif         = "GTD";
         parentOrder.m_goodTillDate = this.m_dataHandler.toTimeString(this.m_dataHandler.m_currentServerTime + 5 * 60);
         parentOrder.m_lmtPrice    = this.roundTo5(this.m_dataHandler.m_currentBidPrice);
+        this.m_lastDealPrice = parentOrder.m_lmtPrice;
         logger.log("current bid price: " + this.m_dataHandler.m_currentBidPrice);
         parentOrder.m_totalQuantity = m_nextOrderQuantity;
         int parentOrderId = this.m_dataHandler.m_reqId++;
@@ -321,7 +369,9 @@ public class FisherBot implements IBot {
         takeProfitOrder.m_auxPrice  = 0;
         takeProfitOrder.m_lmtPrice  = parentOrder.m_lmtPrice - m_initialProfitSize;
         takeProfitOrder.m_totalQuantity = parentOrder.m_totalQuantity;
-        m_dataHandler.m_request.placeOrder(m_dataHandler.m_reqId++, m_dataHandler.m_contract, takeProfitOrder);
+        int tpOrderId = m_dataHandler.m_reqId++;
+        this.toCancelOrderId = tpOrderId;
+        m_dataHandler.m_request.placeOrder(tpOrderId, m_dataHandler.m_contract, takeProfitOrder);
 
         // stop loss order
 
@@ -338,6 +388,8 @@ public class FisherBot implements IBot {
         stopLossOrder.m_totalQuantity = parentOrder.m_totalQuantity;
         m_dataHandler.m_request.placeOrder(m_dataHandler.m_reqId++, m_dataHandler.m_contract, stopLossOrder);
 
+        this.m_thisBarSold   = true;
+        this.m_thisBarBought = false;
         // TODO: reset the order quantity if it is more than the initial quantity
 
     }
@@ -527,15 +579,17 @@ public class FisherBot implements IBot {
 
         }
 
-
-        if(fI > fIm1 && fIm2 > fIm1) {
-
+        // place possible buy order for reverse trend
+        if(fI > fIm1 && fIm2 > fIm1 && !this.m_sleeping) {
+            System.out.println("down trend reverse to up trend");
             if(m_thisBarBought == false ) {
+                //System.out.println("executing buying");
                 logger.log("executing buying...");
                 logger.log("fIm2: " +fIm2+ " FIm1: "+fIm1 +"FI: "+ fI);
                 if(this.m_dataHandler.m_position != 0) {
                     this.closePosition();
                     this.m_buyFlag = true;
+                    System.out.println("set m_buyFlag to true");
                     logger.log("m_buyFlag = true");
                 } else {
                     this.m_buyFlag = true;
@@ -543,26 +597,64 @@ public class FisherBot implements IBot {
                 }
 
 
-                m_thisBarBought = true;
+                //m_thisBarBought = true;
             }
         }
 
-        if(fI < fIm1 && fIm2 < fIm1) {
-
+        // place possible sell order for reverse trend
+        if(fI < fIm1 && fIm2 < fIm1 &!this.m_sleeping) {
+            System.out.println("up trend reverse to down trend");
             if(m_thisBarSold == false) {
+                //System.out.println("executing selling");
                 logger.log("executing selling...");
-                logger.log("fIm2: " +fIm2+ " FIm1: "+fIm1 +"FI: "+ fI);
+                logger.log("fIm2: " + fIm2 + " FIm1: " + fIm1 + "FI: " + fI);
                 if(this.m_dataHandler.m_position != 0.0) {
                     this.closePosition();
                     this.m_sellFlag = true;
+                    System.out.println("set sell flag to true");
                 } else {
                     this.m_sellFlag = true;
+                    System.out.println("set sell flag to true");
                     logger.log("m_sellFlag = true");
                     this.buyOrSell();
                 }
 
-                m_thisBarSold = true;
+                //m_thisBarSold = true;
             }
         }
+
+        // check previous order for reverse situation
+        if(fI < fIm1 && fIm1 < fIm2 &&!this.m_sleeping) {
+            // still in down trend
+            // close all buy position
+            if(this.m_dataHandler.m_position > 0) {
+                System.out.println("still in decline position and has positive position ("+this.m_dataHandler.m_position +")");
+                this.closePosition();
+                this.m_sellFlag = true;
+                if(this.m_thisBarBought) {
+                    System.out.println("set sell flag to true");
+                    this.m_sellFlag = true;
+
+                }
+            }
+
+        }
+
+        if(fI > fIm1 && fIm1 > fIm2 && !this.m_sleeping) {
+            // still in upwards trend
+            // close all sell position
+            if(this.m_dataHandler.m_position < 0) {
+                System.out.println("still in upwards position and has negative position ("+this.m_dataHandler.m_position +")");
+                this.closePosition();
+                this.m_buyFlag = true;
+                if(this.m_thisBarSold) {
+                    System.out.println("set buy flag to be true");
+                    this.m_buyFlag = true;
+
+
+                }
+            }
+        }
+
     }
 }

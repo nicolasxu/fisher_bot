@@ -1,8 +1,6 @@
 package com.fisher;
 
-import apidemo.ApiDemo;
 import com.ib.client.*;
-import com.ib.controller.AccountSummaryTag;
 import com.ib.controller.Bar;
 
 import java.text.DateFormat;
@@ -28,7 +26,7 @@ public class DataHandler implements EWrapper{
     public long m_currentServerTime; // update with ever tick
     public int m_nextValidOrderId;
     public ArrayList<Bar> m_bars;
-    public ArrayList<Double> m_medians; // medians value for each bar, ( (high + low) / 2)
+
     public double m_currentBidPrice;
     public double m_currentAskPrice;
     public boolean m_newBidPrice;
@@ -54,6 +52,7 @@ public class DataHandler implements EWrapper{
     public int m_position;
     public double m_avgPositionCost;
     public double m_lastEmptyPosAccountValue;
+    public double m_priceDiff;
 
 
 
@@ -87,7 +86,7 @@ public class DataHandler implements EWrapper{
         this.m_contract.m_exchange = "IDEALPRO";
 
         this.m_bars = new ArrayList<Bar>();
-        this.m_medians = new ArrayList<Double>();
+
         this.m_fiveMinPrices = new ArrayList<Double>();
         this.m_orders = new HashMap<Integer, Order>();
         this.m_orderStates = new HashMap<Integer, OrderState>();
@@ -110,6 +109,7 @@ public class DataHandler implements EWrapper{
         this.m_position = 0;
         this.m_avgPositionCost = 0;
         this.m_lastEmptyPosAccountValue = 0.0;
+        this.m_priceDiff = 50 * 0.00001; // 50 points
 
     }
 
@@ -166,12 +166,11 @@ public class DataHandler implements EWrapper{
         this.m_request.reqMktData(this.m_reqId++, this.m_contract, "233", false, XYZ);
         this.m_request.reqPositions();
 
-
-
     }
 
-    public void handleNew5minBar(long time) {
-        // if new bar, create one and append it to m_bars
+    public void Build5minBar(long time) {
+        // if new bar, create one and append it to m_bars,
+        // if not new bar, update current bar based on the latest tick price
 
         if(this.m_newBidPrice || this.m_newAskPrice) {
 
@@ -195,13 +194,10 @@ public class DataHandler implements EWrapper{
                     this.m_bars.add(newBar);
                     this.m_fiveMinPrices.clear();
 
-                    // create and add new mediens
-                    this.m_medians.add(lastClosePrice);
-
                     // calculate
-                    this.m_fisherBot.calculate();
+                    //this.m_fisherBot.calculate();
                     // decide
-                    this.m_fisherBot.decide();
+                    //this.m_fisherBot.decide();
 
                     // reset new price flag
                     this.m_newBidPrice = false;
@@ -226,15 +222,15 @@ public class DataHandler implements EWrapper{
 
 
             } else {
-
-                // update last bar, last median, no new bar or median creation
+                // not a new bar
+                // update last bar, no new bar
                 this.handleTickPrice();
 
                 // just calculate
-                this.m_fisherBot.calculate();
+                //this.m_fisherBot.calculate();
 
                 // then decide also
-                this.m_fisherBot.decide();
+                //this.m_fisherBot.decide();
 
                 // reset the flag
                 if(this.m_newAskPrice == true) {
@@ -274,10 +270,10 @@ public class DataHandler implements EWrapper{
         // always put data to last m_bars
 
         // 1. find the mid price
-        double mid = this.findMidPrice(); // from the current bid and ask price, not from bar high and low price
+        double bidAskMid = this.findMidPrice(); // from the current bid and ask price, not from bar high and low price
 
         // 2. add to temp price list
-        this.m_fiveMinPrices.add(mid);
+        this.m_fiveMinPrices.add(bidAskMid);
 
 
 
@@ -295,8 +291,8 @@ public class DataHandler implements EWrapper{
         }
 
         // 4. update last bar
-        int lastIndex = m_bars.size() - 1;
-        Bar lastBar = m_bars.get(lastIndex);
+        int latestBarIndex = m_bars.size() - 1;
+        Bar lastBar = m_bars.get(latestBarIndex);
 
         if(high > lastBar.m_high) {
             lastBar.m_high = high;
@@ -306,10 +302,9 @@ public class DataHandler implements EWrapper{
             lastBar.m_low = low;
         }
 
-        lastBar.m_close = mid;
+        lastBar.m_close = bidAskMid;
 
-        // 5. update last m_medians
-        this.m_medians.set(lastIndex, lastBar.close() );
+
 
 
         // test
@@ -347,7 +342,7 @@ public class DataHandler implements EWrapper{
 
     @Override
     public void tickPrice(int tickerId, int field, double price, int canAutoExecute) {
-
+        // tickPrice() -> currentTime() -> Build5minBar() -> handleTickPrice()
 
         String fieldDesc = TickType.getField(field);
         //System.out.println(fieldDesc + ": " + price);
@@ -375,9 +370,6 @@ public class DataHandler implements EWrapper{
 
 
 
-
-
-
                 break;
             default:
 
@@ -386,7 +378,7 @@ public class DataHandler implements EWrapper{
 
 
 
-        // price is handled in currentTime() handler
+        // potential action for new price is handled in currentTime() handler
         this.m_request.reqCurrentTime();
 
 
@@ -575,16 +567,6 @@ public class DataHandler implements EWrapper{
             DecimalFormat f = new DecimalFormat("0.00000");
             DateFormat df = new SimpleDateFormat("yyyyMMdd HH:mm:ss");  // yyyymmdd hh:mm:ss tmz
 
-            for(Bar b: m_bars) {
-
-                // enable below line for live data:
-                m_medians.add(b.close());
-
-                // generate data for MT5
-                //System.out.println("ssTestPrice["+m_bars.indexOf(b)+"]= "+ f.format(inputNumber)   +";");
-            }
-
-
             this.m_fisherBot.calculate();
             this.m_fisherBot.decide();
 
@@ -627,7 +609,7 @@ public class DataHandler implements EWrapper{
     @Override
     public void currentTime(long time) {
 
-        this.handleNew5minBar(time);
+        this.Build5minBar(time);
 
 
         // if 1st time, then set the string
@@ -678,6 +660,7 @@ public class DataHandler implements EWrapper{
                 // all position is liquidated, request summary for "SettledCash"
                 //System.out.println("requesting account summary... in position()...");
                 //this.m_request.reqAccountSummary(this.m_reqId++, "All", "TotalCashValue");
+                this.m_fisherBot.m_closingPosition = false;
 
             }
         }
@@ -694,8 +677,9 @@ public class DataHandler implements EWrapper{
 
     @Override
     public void accountSummary(int reqId, String account, String tag, String value, String currency) {
-        System.out.println("accountSummary() - triggered");
+        System.out.println("accountSummary() triggered with tag: " + tag +" position: " + this.m_position);
         if(tag.compareTo("TotalCashValue") == 0 && this.m_position == 0) {
+            System.out.println("TotalCashValue tag with position == 0");
             // only run this when all positions are closed
             System.out.println("TotalCashValue: " + value);
             double currentValue = Double.parseDouble(value);
@@ -719,6 +703,7 @@ public class DataHandler implements EWrapper{
             } else {
                 // value is not valid, probably start up
                 this.m_lastEmptyPosAccountValue = currentValue;
+                System.out.println("set m_lastEmptyPosAccountValue to " + currentValue);
             }
 
         }

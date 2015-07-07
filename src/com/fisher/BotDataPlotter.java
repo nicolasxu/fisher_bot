@@ -84,7 +84,7 @@ public class BotDataPlotter {
     }
 
     public void updatePlotData () {
-        System.out.println("updatePlotData() called...");
+        //System.out.println("updatePlotData() called...");
         // always re-draw the last one
         // 1. convert data from reference to drawing data
         this.purgeDrawingData();
