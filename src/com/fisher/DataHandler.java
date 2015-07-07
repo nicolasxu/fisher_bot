@@ -52,15 +52,16 @@ public class DataHandler implements EWrapper{
     public int m_position;
     public double m_avgPositionCost;
     public double m_lastEmptyPosAccountValue;
-    public double m_priceDiff;
 
-    public int m_lastBarCount;
 
+    public int m_lastBarCount; // used for triggering new bar call
+
+    public ArrayList<Tick> m_constantDistanceTicks;
+    public double m_tickFilterDistance;
 
 
 
     public DataHandler(ILogger logger) {
-
 
         this.m_logger = logger;
 
@@ -111,9 +112,42 @@ public class DataHandler implements EWrapper{
         this.m_position = 0;
         this.m_avgPositionCost = 0;
         this.m_lastEmptyPosAccountValue = 0.0;
-        this.m_priceDiff = 50 * 0.00001; // 50 points
+        this.m_tickFilterDistance = 50 * 0.00001; // 50 points
+        this.m_constantDistanceTicks = new ArrayList<Tick>();
         this.m_lastBarCount = 0;
 
+    }
+    public void buildConstantDistanceTicks() {
+
+        double currentMidPrice = 0;
+
+        if(this.m_constantDistanceTicks.size() == 0) {
+            // empty, first tick
+            currentMidPrice = this.findBidAskPriceBothValid();
+
+            if(currentMidPrice == 0) {
+                // if current price not valid, then just skip this tick
+                return;
+            }
+
+            // put into array list
+            this.m_constantDistanceTicks.add(new Tick(this.m_currentServerTime, this.m_currentBidPrice, this.m_currentAskPrice));
+
+        } else {
+            // not empty
+            // 1. get last one
+            int total = this.m_constantDistanceTicks.size();
+            Tick lastTick = this.m_constantDistanceTicks.get(total - 1);
+            double lastMidPrice = (lastTick.bid + lastTick.ask) / 2;
+            currentMidPrice = (this.m_currentBidPrice + this.m_currentAskPrice) / 2;
+
+            if(Math.abs(lastMidPrice - currentMidPrice) >= this.m_tickFilterDistance ) {
+                this.m_constantDistanceTicks.add(new Tick(this.m_currentServerTime, this.m_currentBidPrice, this.m_currentAskPrice));
+                System.out.println("new m_constantDistanceTicks.size(): " + this.m_constantDistanceTicks.size());
+            } else {
+                System.out.println("skip current current tick: " + currentMidPrice);
+            }
+        }
     }
 
     public void connectForever(int seconds) {
@@ -148,7 +182,6 @@ public class DataHandler implements EWrapper{
 
     }
 
-
     public void fetchContractHistoricalData() {
         this.m_logger.log("fetching data...");
         List<TagValue> XYZ = new ArrayList<TagValue>();
@@ -171,7 +204,7 @@ public class DataHandler implements EWrapper{
 
     }
 
-    public void Build5minBar(long time) {
+    public void build5minBar(long time) {
         // if new bar, create one and append it to m_bars,
         // if not new bar, update current bar based on the latest tick price
         // Only build 5 min bars, no bot logic in this function
@@ -259,6 +292,17 @@ public class DataHandler implements EWrapper{
         return mid;
     }
 
+    public double findBidAskPriceBothValid() {
+
+        if(this.m_currentBidPrice > 0 && this.m_currentAskPrice > 0) {
+            // both bid and ask has value
+            return (this.m_currentBidPrice + this.m_currentAskPrice) / 2;
+        }
+
+        // if either bid or ask is empty, then return 0;
+        return 0.0;
+    }
+
     public void updateCurrentBarHighLowPrice() {
         // always put data to last m_bars
 
@@ -330,10 +374,9 @@ public class DataHandler implements EWrapper{
 
     }
 
-
     @Override
     public void tickPrice(int tickerId, int field, double price, int canAutoExecute) {
-        // tickPrice() -> currentTime() -> Build5minBar() -> updateCurrentBarHighLowPrice()
+        // tickPrice() -> currentTime() -> build5minBar() -> updateCurrentBarHighLowPrice()
 
         String fieldDesc = TickType.getField(field);
         //System.out.println(fieldDesc + ": " + price);
@@ -494,14 +537,11 @@ public class DataHandler implements EWrapper{
             return;
         }
 
-
-
         this.m_executions.add(execution);
         System.out.println("ExecDetails() - " + "reqId: "+reqId + " side: " + execution.m_side + " " + execution.m_avgPrice);
 
         // find out loss in points in EUR/USD
         this.m_fisherBot.findOutLoss();
-
     }
 
     @Override
@@ -604,11 +644,13 @@ public class DataHandler implements EWrapper{
     @Override
     public void currentTime(long time) {
 
-        this.Build5minBar(time);
+        this.build5minBar(time);
+
+        this.buildConstantDistanceTicks();
 
         if(this.m_lastBarCount == this.m_bars.size()) {
-            // still in current bar
-            // ****
+            // not new bar
+            // ****  you can still call
             // call bot.calculate()
             // call bot.decide()
             // ****
@@ -617,16 +659,13 @@ public class DataHandler implements EWrapper{
             // update new bar count
             this.m_lastBarCount = this.m_bars.size();
 
-
             // ****
-            // you can still call
             // bot.calculate()
             // bot.decide()
             // ****
         }
 
-
-        // if 1st time, then set the string
+        // if 1st time, then set the time string
         if(this.m_systemStartTimeString.length() == 0) {
             this.m_currentServerTime = time;
             this.m_systemStartTimeString = this.toTimeString(time);
@@ -678,10 +717,6 @@ public class DataHandler implements EWrapper{
 
             }
         }
-
-
-
-
     }
 
     @Override

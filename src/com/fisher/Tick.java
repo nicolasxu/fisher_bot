@@ -13,5 +13,10 @@ public class Tick {
         this.bid = 0;
         this.ask = 0;
     }
+    public Tick(long t, double b, double a) {
+        this.time = t;
+        this.bid  = b;
+        this.ask  = a;
+    }
 
 }

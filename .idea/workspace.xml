@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="09d32302-5fbd-4b19-b5c3-191d54f4a892" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/fisher/DataHandler.java" afterPath="$PROJECT_DIR$/src/com/fisher/DataHandler.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/fisher/Tick.java" afterPath="$PROJECT_DIR$/src/com/fisher/Tick.java" />
     </list>
     <ignored path="fisher_bot.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -27,10 +28,29 @@
       <file leaf-file-name="DataHandler.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/fisher/DataHandler.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="1.6378067">
-              <caret line="178" column="29" selection-start-line="178" selection-start-column="16" selection-end-line="178" selection-end-column="29" />
+            <state vertical-scroll-proportion="0.85714287">
+              <caret line="152" column="45" selection-start-line="152" selection-start-column="45" selection-end-line="152" selection-end-column="45" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="e#5674#5675#0" expanded="true" />
+                <element signature="e#5717#5718#0" expanded="true" />
+                <element signature="method#fetchContractHistoricalData#0;class#DataHandler#0" expanded="false" />
+                <element signature="e#6137#6147#0" expanded="true" />
+                <element signature="method#build5minBar#0;class#DataHandler#0" expanded="false" />
+                <element signature="method#findBidAskMidPrice#0;class#DataHandler#0" expanded="false" />
+                <element signature="method#tickSize#0;class#DataHandler#0" expanded="false" />
+                <element signature="method#tickOptionComputation#0;class#DataHandler#0" expanded="false" />
+                <element signature="method#openOrder#0;class#DataHandler#0" expanded="false" />
+                <element signature="method#openOrderEnd#0;class#DataHandler#0" expanded="false" />
+                <element signature="method#updateAccountValue#0;class#DataHandler#0" expanded="false" />
+                <element signature="method#updatePortfolio#0;class#DataHandler#0" expanded="false" />
+                <element signature="method#updateAccountTime#0;class#DataHandler#0" expanded="false" />
+                <element signature="method#accountDownloadEnd#0;class#DataHandler#0" expanded="false" />
+                <element signature="method#nextValidId#0;class#DataHandler#0" expanded="false" />
+                <element signature="method#execDetails#0;class#DataHandler#0" expanded="false" />
+                <element signature="method#historicalData#0;class#DataHandler#0" expanded="false" />
+                <element signature="method#position#0;class#DataHandler#0" expanded="false" />
+                <element signature="method#accountSummary#0;class#DataHandler#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -40,7 +60,7 @@
         <entry file="file://$PROJECT_DIR$/src/com/fisher/Tick.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="15" column="0" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
+              <caret line="18" column="18" selection-start-line="18" selection-start-column="18" selection-end-line="18" selection-end-column="18" />
               <folding />
             </state>
           </provider>
@@ -617,6 +637,25 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#5674#5675#0" expanded="true" />
+            <element signature="e#5717#5718#0" expanded="true" />
+            <element signature="method#fetchContractHistoricalData#0;class#DataHandler#0" expanded="false" />
+            <element signature="e#6137#6147#0" expanded="true" />
+            <element signature="method#build5minBar#0;class#DataHandler#0" expanded="false" />
+            <element signature="method#findBidAskMidPrice#0;class#DataHandler#0" expanded="false" />
+            <element signature="method#tickSize#0;class#DataHandler#0" expanded="false" />
+            <element signature="method#tickOptionComputation#0;class#DataHandler#0" expanded="false" />
+            <element signature="method#openOrder#0;class#DataHandler#0" expanded="false" />
+            <element signature="method#openOrderEnd#0;class#DataHandler#0" expanded="false" />
+            <element signature="method#updateAccountValue#0;class#DataHandler#0" expanded="false" />
+            <element signature="method#updatePortfolio#0;class#DataHandler#0" expanded="false" />
+            <element signature="method#updateAccountTime#0;class#DataHandler#0" expanded="false" />
+            <element signature="method#accountDownloadEnd#0;class#DataHandler#0" expanded="false" />
+            <element signature="method#nextValidId#0;class#DataHandler#0" expanded="false" />
+            <element signature="method#execDetails#0;class#DataHandler#0" expanded="false" />
+            <element signature="method#historicalData#0;class#DataHandler#0" expanded="false" />
+            <element signature="method#position#0;class#DataHandler#0" expanded="false" />
+            <element signature="method#accountSummary#0;class#DataHandler#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -634,6 +673,25 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#5674#5675#0" expanded="true" />
+            <element signature="e#5717#5718#0" expanded="true" />
+            <element signature="method#fetchContractHistoricalData#0;class#DataHandler#0" expanded="false" />
+            <element signature="e#6137#6147#0" expanded="true" />
+            <element signature="method#build5minBar#0;class#DataHandler#0" expanded="false" />
+            <element signature="method#findBidAskMidPrice#0;class#DataHandler#0" expanded="false" />
+            <element signature="method#tickSize#0;class#DataHandler#0" expanded="false" />
+            <element signature="method#tickOptionComputation#0;class#DataHandler#0" expanded="false" />
+            <element signature="method#openOrder#0;class#DataHandler#0" expanded="false" />
+            <element signature="method#openOrderEnd#0;class#DataHandler#0" expanded="false" />
+            <element signature="method#updateAccountValue#0;class#DataHandler#0" expanded="false" />
+            <element signature="method#updatePortfolio#0;class#DataHandler#0" expanded="false" />
+            <element signature="method#updateAccountTime#0;class#DataHandler#0" expanded="false" />
+            <element signature="method#accountDownloadEnd#0;class#DataHandler#0" expanded="false" />
+            <element signature="method#nextValidId#0;class#DataHandler#0" expanded="false" />
+            <element signature="method#execDetails#0;class#DataHandler#0" expanded="false" />
+            <element signature="method#historicalData#0;class#DataHandler#0" expanded="false" />
+            <element signature="method#position#0;class#DataHandler#0" expanded="false" />
+            <element signature="method#accountSummary#0;class#DataHandler#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -958,17 +1016,36 @@
     <entry file="file://$PROJECT_DIR$/src/com/fisher/Tick.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="15" column="0" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
+          <caret line="18" column="18" selection-start-line="18" selection-start-column="18" selection-end-line="18" selection-end-column="18" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/fisher/DataHandler.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="1.6378067">
-          <caret line="178" column="29" selection-start-line="178" selection-start-column="16" selection-end-line="178" selection-end-column="29" />
+        <state vertical-scroll-proportion="0.85714287">
+          <caret line="152" column="45" selection-start-line="152" selection-start-column="45" selection-end-line="152" selection-end-column="45" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#5674#5675#0" expanded="true" />
+            <element signature="e#5717#5718#0" expanded="true" />
+            <element signature="method#fetchContractHistoricalData#0;class#DataHandler#0" expanded="false" />
+            <element signature="e#6137#6147#0" expanded="true" />
+            <element signature="method#build5minBar#0;class#DataHandler#0" expanded="false" />
+            <element signature="method#findBidAskMidPrice#0;class#DataHandler#0" expanded="false" />
+            <element signature="method#tickSize#0;class#DataHandler#0" expanded="false" />
+            <element signature="method#tickOptionComputation#0;class#DataHandler#0" expanded="false" />
+            <element signature="method#openOrder#0;class#DataHandler#0" expanded="false" />
+            <element signature="method#openOrderEnd#0;class#DataHandler#0" expanded="false" />
+            <element signature="method#updateAccountValue#0;class#DataHandler#0" expanded="false" />
+            <element signature="method#updatePortfolio#0;class#DataHandler#0" expanded="false" />
+            <element signature="method#updateAccountTime#0;class#DataHandler#0" expanded="false" />
+            <element signature="method#accountDownloadEnd#0;class#DataHandler#0" expanded="false" />
+            <element signature="method#nextValidId#0;class#DataHandler#0" expanded="false" />
+            <element signature="method#execDetails#0;class#DataHandler#0" expanded="false" />
+            <element signature="method#historicalData#0;class#DataHandler#0" expanded="false" />
+            <element signature="method#position#0;class#DataHandler#0" expanded="false" />
+            <element signature="method#accountSummary#0;class#DataHandler#0" expanded="false" />
           </folding>
         </state>
       </provider>
