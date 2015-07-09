@@ -36,7 +36,7 @@ public class DataHandler implements EWrapper{
     public int m_marketDataRequestId;
     public HashMap<Long, Double> m_temp5minTicks;
     public ArrayList<Double> m_fiveMinPrices;
-    public FisherBot m_fisherBot;
+
     public boolean m_newBarFlag;
     public BotDataPlotter m_appPlotter;
     public ILogger m_logger;
@@ -53,11 +53,16 @@ public class DataHandler implements EWrapper{
     public double m_avgPositionCost;
     public double m_lastEmptyPosAccountValue;
 
+    public int m_lastConstantTickCount;
 
-    public int m_lastBarCount; // used for triggering new bar call
+
+
 
     public ArrayList<Tick> m_constantDistanceTicks;
     public double m_tickFilterDistance;
+    public long m_serverTimeAlwaysValid;
+
+    public KalmanBot m_kalmanBot;
 
 
 
@@ -97,8 +102,6 @@ public class DataHandler implements EWrapper{
 
         this.m_systemStartTimeString = "";
 
-        this.m_fisherBot = new FisherBot(this, this.m_bars, logger);
-
         m_request.eConnect(null, 7496, this.m_clientId);
 
         //this.connectForever(60);
@@ -114,8 +117,25 @@ public class DataHandler implements EWrapper{
         this.m_lastEmptyPosAccountValue = 0.0;
         this.m_tickFilterDistance = 50 * 0.00001; // 50 points
         this.m_constantDistanceTicks = new ArrayList<Tick>();
-        this.m_lastBarCount = 0;
 
+        this.m_serverTimeAlwaysValid = 0;
+
+        this.m_kalmanBot = new KalmanBot(this);
+        this.m_lastConstantTickCount = 0;
+
+    }
+    public void loadConstantTicks() {
+        // load constant today ticks
+        // only today
+        // TODO
+    }
+
+    public ArrayList<Double> constantTicksToArrayList() {
+        ArrayList<Double> result = new ArrayList<Double>();
+        for(Tick tick: this.m_constantDistanceTicks) {
+            result.add((tick.bid + tick.ask) / 2);
+        }
+        return result;
     }
     public void buildConstantDistanceTicks() {
 
@@ -127,25 +147,26 @@ public class DataHandler implements EWrapper{
 
             if(currentMidPrice == 0) {
                 // if current price not valid, then just skip this tick
+                System.out.println("currentMidPrice is 0, no tick added");
                 return;
             }
 
             // put into array list
-            this.m_constantDistanceTicks.add(new Tick(this.m_currentServerTime, this.m_currentBidPrice, this.m_currentAskPrice));
+            this.m_constantDistanceTicks.add(new Tick(this.m_serverTimeAlwaysValid, this.m_currentBidPrice, this.m_currentAskPrice));
 
         } else {
             // not empty
-            // 1. get last one
+            // 1. get last stored tick
             int total = this.m_constantDistanceTicks.size();
             Tick lastTick = this.m_constantDistanceTicks.get(total - 1);
             double lastMidPrice = (lastTick.bid + lastTick.ask) / 2;
             currentMidPrice = (this.m_currentBidPrice + this.m_currentAskPrice) / 2;
 
             if(Math.abs(lastMidPrice - currentMidPrice) >= this.m_tickFilterDistance ) {
-                this.m_constantDistanceTicks.add(new Tick(this.m_currentServerTime, this.m_currentBidPrice, this.m_currentAskPrice));
+                this.m_constantDistanceTicks.add(new Tick(this.m_serverTimeAlwaysValid, this.m_currentBidPrice, this.m_currentAskPrice));
                 System.out.println("new m_constantDistanceTicks.size(): " + this.m_constantDistanceTicks.size());
             } else {
-                System.out.println("skip current current tick: " + currentMidPrice);
+                System.out.println("buildConstantDistanceTicks() - skip current current tick: " + currentMidPrice);
             }
         }
     }
@@ -311,6 +332,7 @@ public class DataHandler implements EWrapper{
 
         // 2. add to temp price list
         this.m_fiveMinPrices.add(bidAskMid);
+        System.out.println("m_fiveMinPrices.size(): " + this.m_fiveMinPrices.size());
 
         // 3. find high and low
         double high = 0;
@@ -339,39 +361,6 @@ public class DataHandler implements EWrapper{
 
         lastBar.m_close = bidAskMid;
 
-
-
-
-        // test
-        /*
-        if(testBuyOrderSent == false) {
-
-            this.m_request.reqAccountSummary(this.m_reqId++, "All", "TotalCashValue");
-            this.m_fisherBot.buy();
-
-            class CloseAll extends TimerTask {
-
-
-
-                @Override
-                public void run() {
-                    System.out.println("test closing all position...");
-                    m_fisherBot.closePosition();
-                }
-            }
-            TimerTask theTask = new CloseAll();
-            Timer theTimer = new Timer();
-            //theTimer.schedule(theTask, 5*1000, 10*1000);
-            theTimer.schedule(theTask, 5*1000);
-            testBuyOrderSent = true;
-
-        }
-        */
-
-
-        // end of test
-
-
     }
 
     @Override
@@ -387,22 +376,11 @@ public class DataHandler implements EWrapper{
                 this.m_currentBidPrice = price;
                 this.m_newBidPrice = true;
 
-                /*
-                if(testSellOrderSent == false) {
-                    this.m_fisherBot.sell();
-                    this.testSellOrderSent = true;
-                }
-                */
-
-
-
                 break;
             case 2:
                 // ask
                 this.m_currentAskPrice = price;
                 this.m_newAskPrice = true;
-
-
 
                 break;
             default:
@@ -468,10 +446,7 @@ public class DataHandler implements EWrapper{
         this.m_orderStates.put(orderId, orderState);
         this.m_orders.put(orderId, order);
         // update execution count
-        this.m_fisherBot.updateOrderExecution();
 
-        //System.out.println("m_orderStates.size(): " + m_orderStates.size());
-        //System.out.println("m_orders.size(): " + m_orders.size());
     }
 
     @Override
@@ -541,7 +516,6 @@ public class DataHandler implements EWrapper{
         System.out.println("ExecDetails() - " + "reqId: "+reqId + " side: " + execution.m_side + " " + execution.m_avgPrice);
 
         // find out loss in points in EUR/USD
-        this.m_fisherBot.findOutLoss();
     }
 
     @Override
@@ -600,18 +574,17 @@ public class DataHandler implements EWrapper{
 
             // **** call bot calculate() and decide() if needed when historical data is downloaded
 
-            this.m_fisherBot.calculate();
-            this.m_fisherBot.decide();
+           // TODO: here
 
             // ****
 
             // bind data to plotter
-            this.m_appPlotter.setBarSource(this.m_bars);
-            this.m_appPlotter.setFisherSource(m_fisherBot.m_fisher);
-            this.m_appPlotter.setTriggerSource(m_fisherBot.m_trigger);
-            this.m_appPlotter.setStdSource(m_fisherBot.m_standDeviations);
-            this.m_appPlotter.purgeDrawingData();
-            this.m_appPlotter.updatePlotData();
+            //this.m_appPlotter.setBarSource(this.m_bars);
+            //this.m_appPlotter.setFisherSource(m_fisherBot.m_fisher);
+            //this.m_appPlotter.setTriggerSource(m_fisherBot.m_trigger);
+            //this.m_appPlotter.setStdSource(m_fisherBot.m_standDeviations);
+            //this.m_appPlotter.purgeDrawingData();
+            //this.m_appPlotter.updatePlotData();
 
             this.requestLiveData();
             this.m_request.reqAccountSummary(this.m_reqId++, "All", "TotalCashValue");
@@ -644,26 +617,25 @@ public class DataHandler implements EWrapper{
     @Override
     public void currentTime(long time) {
 
-        this.build5minBar(time);
+        this.m_serverTimeAlwaysValid = time;
+
+        //this.build5minBar(time);
 
         this.buildConstantDistanceTicks();
 
-        if(this.m_lastBarCount == this.m_bars.size()) {
-            // not new bar
-            // ****  you can still call
-            // call bot.calculate()
-            // call bot.decide()
-            // ****
-        } else {
-            // new bar
-            // update new bar count
-            this.m_lastBarCount = this.m_bars.size();
+        if(this.m_constantDistanceTicks.size() > this.m_lastConstantTickCount) {
+            // new qualified tick generated,
+            this.m_kalmanBot.calculate();
+            this.m_kalmanBot.decide();
 
-            // ****
-            // bot.calculate()
-            // bot.decide()
-            // ****
+            // update tick count
+            this.m_lastConstantTickCount = this.m_constantDistanceTicks.size();
+
+        } else {
+            // could also do something when
         }
+
+
 
         // if 1st time, then set the time string
         if(this.m_systemStartTimeString.length() == 0) {
@@ -713,7 +685,7 @@ public class DataHandler implements EWrapper{
                 // all position is liquidated, request summary for "SettledCash"
                 //System.out.println("requesting account summary... in position()...");
                 //this.m_request.reqAccountSummary(this.m_reqId++, "All", "TotalCashValue");
-                this.m_fisherBot.m_closingPosition = false;
+
 
             }
         }
@@ -738,16 +710,15 @@ public class DataHandler implements EWrapper{
                 double diff = currentValue - this.m_lastEmptyPosAccountValue;
                 if(diff > 0) {
                     System.out.println("making money: " + diff);
-                    this.m_fisherBot.calculateNextPosition(diff);
+
                     this.m_lastEmptyPosAccountValue = currentValue;
                 } else {
                     System.out.println("lossing money: " + diff);
                     // calculate next order size e.g.:
-                    this.m_fisherBot.calculateNextPosition(diff);
+
 
                 }
 
-                this.m_fisherBot.buyOrSell();
 
             } else {
                 // value is not valid, probably start up

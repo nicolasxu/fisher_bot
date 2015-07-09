@@ -210,7 +210,7 @@ public class FisherBot implements IBot {
         this.m_dataHandler.m_request.cancelOrder(this.toCancelOrderId);
         System.out.println("cancel order with position("+ m_dataHandler.m_position+ "), id: " + this.toCancelOrderId);
 
-        // cancel all pending orders globally.
+
         Order closeOrder = new Order();
         closeOrder.m_clientId = this.m_dataHandler.m_clientId;
         closeOrder.m_orderType = "MKT";

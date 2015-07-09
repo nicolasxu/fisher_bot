@@ -17,6 +17,7 @@ public class Tick {
         this.time = t;
         this.bid  = b;
         this.ask  = a;
+        System.out.println("new tick created: " + this.time + " bid: " +this.bid + " ask: " + this.ask);
     }
 
 }
