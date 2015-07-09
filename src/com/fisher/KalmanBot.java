@@ -185,7 +185,7 @@ public class KalmanBot implements IBot {
         Order sellOrder = new Order();
         sellOrder.m_clientId    = this.handler.m_clientId;
         //sellOrder.m_orderId is not used
-        sellOrder.m_action      = "BUY";
+        sellOrder.m_action      = "SELL";
         sellOrder.m_orderType   = "LMT";
         sellOrder.m_transmit    = true;
         sellOrder.m_tif         = "GTD";
@@ -197,7 +197,7 @@ public class KalmanBot implements IBot {
         // placing order
         this.handler.m_request.placeOrder(buyOrderId, this.handler.m_contract, sellOrder);
         System.out.println("Buy order placed, id: " + buyOrderId);
-        
+
     }
 
     public void closePosition() {

@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="09d32302-5fbd-4b19-b5c3-191d54f4a892" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/fisher/DataHandler.java" afterPath="$PROJECT_DIR$/src/com/fisher/DataHandler.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/fisher/FisherBot.java" afterPath="$PROJECT_DIR$/src/com/fisher/FisherBot.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/fisher/KalmanBot.java" afterPath="$PROJECT_DIR$/src/com/fisher/KalmanBot.java" />
     </list>
     <ignored path="fisher_bot.iws" />
@@ -74,8 +72,8 @@
       <file leaf-file-name="KalmanBot.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/fisher/KalmanBot.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.68740517">
-              <caret line="199" column="8" selection-start-line="199" selection-start-column="8" selection-end-line="199" selection-end-column="8" />
+            <state vertical-scroll-proportion="0.5675266">
+              <caret line="187" column="39" selection-start-line="187" selection-start-column="39" selection-end-line="187" selection-end-column="39" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -1083,8 +1081,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/fisher/KalmanBot.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.68740517">
-          <caret line="199" column="8" selection-start-line="199" selection-start-column="8" selection-end-line="199" selection-end-column="8" />
+        <state vertical-scroll-proportion="0.5675266">
+          <caret line="187" column="39" selection-start-line="187" selection-start-column="39" selection-end-line="187" selection-end-column="39" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
