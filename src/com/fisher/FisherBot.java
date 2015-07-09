@@ -217,8 +217,6 @@ public class FisherBot implements IBot {
         closeOrder.m_transmit = true;
         closeOrder.m_totalQuantity = Math.abs(this.m_dataHandler.m_position);
 
-
-
         if(this.m_dataHandler.m_position > 0) {
             closeOrder.m_action = "SELL";
 
@@ -228,10 +226,13 @@ public class FisherBot implements IBot {
         if(this.m_dataHandler.m_position < 0) {
             closeOrder.m_action = "BUY";
         }
+
         int orderId = this.m_dataHandler.m_reqId++;
         System.out.println("closePosition() - Since right now the position is: " + m_dataHandler.m_position + " , placing "
                 + closeOrder.m_action+ " order with quantity: " + closeOrder.m_totalQuantity + " to close position");
+
         this.m_dataHandler.m_request.placeOrder(orderId, this.m_dataHandler.m_contract, closeOrder);
+
         // add order id to this collection
         this.m_closePositionOrders.add(orderId);
 

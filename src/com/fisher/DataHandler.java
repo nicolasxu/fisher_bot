@@ -445,7 +445,8 @@ public class DataHandler implements EWrapper{
 
         this.m_orderStates.put(orderId, orderState);
         this.m_orders.put(orderId, order);
-        // update execution count
+
+
 
     }
 
@@ -515,7 +516,6 @@ public class DataHandler implements EWrapper{
         this.m_executions.add(execution);
         System.out.println("ExecDetails() - " + "reqId: "+reqId + " side: " + execution.m_side + " " + execution.m_avgPrice);
 
-        // find out loss in points in EUR/USD
     }
 
     @Override
@@ -587,7 +587,9 @@ public class DataHandler implements EWrapper{
             //this.m_appPlotter.updatePlotData();
 
             this.requestLiveData();
+            // only need to call reqAccountSummary() once to subscribe the data
             this.m_request.reqAccountSummary(this.m_reqId++, "All", "TotalCashValue");
+
 
 
         }
@@ -673,8 +675,8 @@ public class DataHandler implements EWrapper{
 
     @Override
     public void position(String account, Contract contract, int pos, double avgCost) {
-        //System.out.println("position() pos: " + pos);
-        //System.out.println("position() - contract.m_symbol: "+ contract.m_symbol);
+
+
         if(contract.m_symbol.compareTo("EUR") == 0) {
             System.out.println("position() - found \"EUR\": " + pos);
             this.m_logger.log("position is: " + pos + " for contract: " + contract.m_symbol);
@@ -684,8 +686,6 @@ public class DataHandler implements EWrapper{
             if(pos == 0) {
                 // all position is liquidated, request summary for "SettledCash"
                 //System.out.println("requesting account summary... in position()...");
-                //this.m_request.reqAccountSummary(this.m_reqId++, "All", "TotalCashValue");
-
 
             }
         }
