@@ -2,7 +2,6 @@ package com.fisher;
 
 import com.ib.client.Order;
 
-import java.lang.reflect.Array;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -18,7 +17,8 @@ public class KalmanBot implements IBot {
     DataHandler handler;
     int m_initialOrderSize;
     double m_takeProfitSize;
-    double m_comissionRate;
+    double m_commissionRate;
+    double m_lastOrderPrice;
 
     public KalmanBot (DataHandler handler) {
         this.handler = handler;
@@ -32,7 +32,9 @@ public class KalmanBot implements IBot {
         this.m_output = new ArrayList<Double>();
         this.m_initialOrderSize = 100000; // 100,000 Euros
         this.m_takeProfitSize = 50 * 0.00001; // 50 points
-        this.m_comissionRate = 2 * 0.00001; // 0.2 base point * tradeValue
+        this.m_commissionRate = 2 * 0.00001; // 0.2 base point * tradeValue
+        this.m_lastOrderPrice = 0; // init to 0, and will be assigned everything new order is created,
+                                   // but not for take profit order
     }
 
     @Override
@@ -46,7 +48,7 @@ public class KalmanBot implements IBot {
         this.handler.m_request.reqGlobalCancel();
     }
 
-    public int calculateNextAmount() {
+    public int calculateNewOrderAmount() {
         // assuming next order will always reverse the direction of current position
         int    pos  = this.handler.m_position;
         double cost = this.handler.m_avgPositionCost;
@@ -56,8 +58,8 @@ public class KalmanBot implements IBot {
         // calculate profit/loss
 
         if(pos == 0) {
-            double comissionAmount = this.m_initialOrderSize * this.m_comissionRate * 2 / this.m_takeProfitSize;
-            return this.m_initialOrderSize + (int)comissionAmount;
+            double commissionAmount = this.m_initialOrderSize * this.m_commissionRate * 2 / this.m_takeProfitSize;
+            return this.m_initialOrderSize + (int)commissionAmount;
         }
 
         if(pos > 0) {
@@ -71,21 +73,21 @@ public class KalmanBot implements IBot {
                 // making money
                 if(diff < this.m_takeProfitSize) {
                     // but not making enough
-                    double adjOrderAmount = (this.m_takeProfitSize - diff) / this.m_takeProfitSize * this.m_initialOrderSize;
-                    double comissionAmount = ((adjOrderAmount + this.m_initialOrderSize) * this.m_comissionRate) * 2 / this.m_takeProfitSize;
-                    return ((int)adjOrderAmount + this.m_initialOrderSize + (int)comissionAmount);
+                    double adjOrderAmount = (this.m_takeProfitSize - diff + this.m_takeProfitSize) / this.m_takeProfitSize * this.m_initialOrderSize;
+                    double commissionAmount = ((adjOrderAmount + pos) * this.m_commissionRate) * 2 / this.m_takeProfitSize;
+                    return ((int)adjOrderAmount + pos + (int)commissionAmount);
 
                 } else {
                     // making enough money
-                    double comissionAmount = this.m_initialOrderSize * this.m_comissionRate * 2 / this.m_takeProfitSize;
-                    return this.m_initialOrderSize + (int)comissionAmount;
+                    double commissionAmount = (this.m_initialOrderSize + pos )* this.m_commissionRate * 2 / this.m_takeProfitSize;
+                    return this.m_initialOrderSize + pos + (int)commissionAmount;
 
                 }
             } else {
                 // losing money
                 double amount = (-diff + this.m_takeProfitSize) / this.m_takeProfitSize * this.m_initialOrderSize;
-                double comissionAmount = amount * this.m_comissionRate * 2 / this.m_takeProfitSize;
-                return (int)(amount + comissionAmount);
+                double commissionAmount = (amount + pos) * this.m_commissionRate * 2 / this.m_takeProfitSize;
+                return (int)(amount + pos + commissionAmount);
 
             }
 
@@ -93,26 +95,50 @@ public class KalmanBot implements IBot {
 
 
         } else {
-            // next order will be a buy order
+            // next order will be a buy order, pos is negative
             double currentAsk = this.handler.m_currentAskPrice;
             double diff = cost - currentAsk;
             if(diff > 0) {
                 // making money
                 if(diff - this.m_takeProfitSize < 0) {
                     // but not making enough
-                    double adjOrderAmount = (this.m_takeProfitSize - diff) / this.m_takeProfitSize * this.m_initialOrderSize;
-                    double comissionAmount = (adjOrderAmount + this.m_initialOrderSize) * this.m_comissionRate * 2 / this.m_takeProfitSize;
-                    return (int)(adjOrderAmount + comissionAmount);
+                    double adjOrderAmount = (this.m_takeProfitSize - diff + this.m_takeProfitSize) / this.m_takeProfitSize * this.m_initialOrderSize;
+                    double commissionAmount = (adjOrderAmount + -pos) * this.m_commissionRate * 2 / this.m_takeProfitSize;
+                    return (int)(adjOrderAmount + -pos + commissionAmount );
                 } else {
                     // making enough
-                    double comissionAmount = this.m_initialOrderSize * this.m_comissionRate * 2 / this.m_takeProfitSize;
-                    return this.m_initialOrderSize + (int)comissionAmount;
+                    double commissionAmount = (this.m_initialOrderSize + -pos ) * this.m_commissionRate * 2 / this.m_takeProfitSize;
+                    return this.m_initialOrderSize + (int)commissionAmount + -pos;
                 }
             } else {
                 // losing money
                 double amount = (-diff + this.m_takeProfitSize) / this.m_takeProfitSize * this.m_initialOrderSize;
-                double comissionAmount = amount * this.m_comissionRate * 2 / this.m_takeProfitSize;
-                return (int)(amount + comissionAmount);
+                double commissionAmount = (amount + -pos) * this.m_commissionRate * 2 / this.m_takeProfitSize;
+                return (int)(amount + -pos + commissionAmount);
+            }
+        }
+    }
+
+    public void tryTakeProfit() {
+        if(this.handler.m_position == 0) {
+
+            return;
+        }
+
+        if(this.handler.m_position > 0) {
+
+            // sell at bid price
+            double bidPrice = this.roundTo5(this.handler.m_currentBidPrice);
+            if(bidPrice - this.m_lastOrderPrice >= this.m_takeProfitSize) {
+                // good to close
+                sell(this.handler.m_position);
+            }
+        } else {
+            // buy at ask price
+            double askPrice = this.roundTo5(this.handler.m_currentAskPrice);
+            if(askPrice - this.m_lastOrderPrice >= this.m_takeProfitSize) {
+                // good to close
+                buy(-this.handler.m_position);
             }
         }
     }
@@ -128,18 +154,27 @@ public class KalmanBot implements IBot {
         int signal0  = this.m_kFilter.buySellSignal.get(index);
         int signalM1 = this.m_kFilter.buySellSignal.get(index - 1);
 
+        if(signal0 == signalM1) {
+            // in the same Kalman trend as the previous point
+            // check for take profit
+            this.tryTakeProfit();
+        }
+
         if(signalM1 == 1 && signal0 == 0) {
             // sell
-            int amount = this.calculateNextAmount();
+            int amount = this.calculateNewOrderAmount();
             this.sell(amount);
+            this.m_lastOrderPrice = this.roundTo5(this.handler.m_currentBidPrice);
         }
 
         if(signalM1 == 0 && signal0 == 1) {
             // buy
-            int amount = this.calculateNextAmount();
+            int amount = this.calculateNewOrderAmount();
             this.buy(amount);
+            this.m_lastOrderPrice = this.roundTo5(this.handler.m_currentAskPrice);
 
         }
+
 
     }
     public double roundTo5(double input) {
@@ -148,7 +183,6 @@ public class KalmanBot implements IBot {
         double point = 0.00001;
 
         double number = Math.round(input / point / 5) * 5 * point;
-
 
         DecimalFormat df = new DecimalFormat("#.######");
         df.setRoundingMode(RoundingMode.HALF_UP);
