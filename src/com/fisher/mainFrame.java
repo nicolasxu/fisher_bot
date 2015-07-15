@@ -37,16 +37,10 @@ public class mainFrame extends JFrame {
         this.stopButton.setEnabled(false);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // chart
-        this.plotter = new BotDataPlotter();
-        this.chart = plotter.createChart();
-        this.chartPanel = new ChartPanel(this.chart);
-        this.plotScrollPane = new JScrollPane();
-        this.plotScrollPane.add(chartPanel);
-        this.plotScrollPane.setViewportView(chartPanel);
 
-        Container pane = this.getContentPane();
-        pane.add(this.plotScrollPane, BorderLayout.SOUTH);
+
+
+
 
         this.logger = new TextAreaLogger(logArea);
         this.fileLogger = new FileLogger();
@@ -58,9 +52,32 @@ public class mainFrame extends JFrame {
         // TODO add your code here
         this.logger.log("starting the application");
         this.handler = new DataHandler(fileLogger); // kick start the connection in the DataHandler constructor
+
+        // Create and attach chart panel
+        this.plotter = new BotDataPlotter();
         this.handler.setPlotter(this.plotter);
 
-        this.plotter.purgeDrawingData();
+        this.plotter.setKalmanTickSource(this.handler.m_kalmanBot.m_midTicks);
+        this.plotter.setKalmanOutputSource(this.handler.m_kalmanBot.m_output);
+        this.plotter.setKalmanSignalSource(this.handler.m_kalmanBot.m_kFilter.buySellSignal);
+
+        this.chart = plotter.createKalmanChart();
+        this.plotter.customizeChart();
+
+        this.chartPanel = new ChartPanel(this.chart);
+        this.plotScrollPane = new JScrollPane();
+        this.plotScrollPane.add(chartPanel);
+        this.plotScrollPane.setViewportView(chartPanel);
+
+        Container pane = this.getContentPane();
+
+        pane.add(this.plotScrollPane, BorderLayout.SOUTH);
+
+        this.plotScrollPane.setVisible(true);
+
+        pane.setVisible(false);
+        pane.setVisible(true);
+
         this.startButton.setEnabled(false);
         this.stopButton.setEnabled(true);
 

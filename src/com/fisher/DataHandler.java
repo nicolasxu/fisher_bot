@@ -123,6 +123,17 @@ public class DataHandler implements EWrapper{
         this.m_kalmanBot = new KalmanBot(this);
         this.m_lastConstantTickCount = 0;
 
+        // test
+        this.m_constantDistanceTicks.add(new Tick(1234, 1, 1));
+        this.m_constantDistanceTicks.add(new Tick(1234, 2, 2));
+        this.m_constantDistanceTicks.add(new Tick(1234, 3, 3));
+        this.m_constantDistanceTicks.add(new Tick(1234, 4, 4));
+        this.m_constantDistanceTicks.add(new Tick(1234, 5, 5));
+
+        this.m_kalmanBot.calculate();
+
+        // end of test
+
     }
     public void loadConstantTicks() {
         // load constant today ticks
@@ -145,6 +156,8 @@ public class DataHandler implements EWrapper{
             // empty, first tick
             currentMidPrice = this.findBidAskPriceBothValid();
 
+
+
             if(currentMidPrice == 0) {
                 // if current price not valid, then just skip this tick
                 System.out.println("currentMidPrice is 0, no tick added");
@@ -166,7 +179,7 @@ public class DataHandler implements EWrapper{
                 this.m_constantDistanceTicks.add(new Tick(this.m_serverTimeAlwaysValid, this.m_currentBidPrice, this.m_currentAskPrice));
                 System.out.println("new m_constantDistanceTicks.size(): " + this.m_constantDistanceTicks.size());
             } else {
-                System.out.println("buildConstantDistanceTicks() - skip current current tick: " + currentMidPrice);
+
             }
         }
     }
@@ -586,6 +599,8 @@ public class DataHandler implements EWrapper{
             //this.m_appPlotter.purgeDrawingData();
             //this.m_appPlotter.updatePlotData();
 
+
+
             this.requestLiveData();
             // only need to call reqAccountSummary() once to subscribe the data
             this.m_request.reqAccountSummary(this.m_reqId++, "All", "TotalCashValue");
@@ -628,6 +643,7 @@ public class DataHandler implements EWrapper{
         if(this.m_constantDistanceTicks.size() > this.m_lastConstantTickCount) {
             // new qualified tick generated,
             this.m_kalmanBot.calculate();
+            this.m_appPlotter.updateKalmanPlot();
             this.m_kalmanBot.decide();
 
             // update tick count
@@ -635,8 +651,10 @@ public class DataHandler implements EWrapper{
 
         } else {
             // could also do something when
-        }
 
+            this.m_kalmanBot.tryTakeProfit(); // avoid double triggering code is added in it
+
+        }
 
 
         // if 1st time, then set the time string

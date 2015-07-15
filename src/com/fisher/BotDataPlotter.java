@@ -1,29 +1,32 @@
 package com.fisher;
 
 import com.ib.controller.Bar;
+import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.labels.StandardXYToolTipGenerator;
 import org.jfree.chart.plot.CombinedDomainXYPlot;
+import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.CandlestickRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
-import org.jfree.chart.urls.StandardXYURLGenerator;
 import org.jfree.data.time.Minute;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.time.ohlc.OHLCItem;
 import org.jfree.data.time.ohlc.OHLCSeries;
 import org.jfree.data.time.ohlc.OHLCSeriesCollection;
-import org.jfree.data.xy.DefaultHighLowDataset;
-import org.jfree.data.xy.DefaultOHLCDataset;
-import org.jfree.data.xy.OHLCDataset;
+import org.jfree.data.xy.XYDataset;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 
 
 import java.awt.*;
+import java.awt.geom.Ellipse2D;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -43,6 +46,9 @@ public class BotDataPlotter {
     public ArrayList<Double> m_fishers;
     public ArrayList<Double> m_triggers;
     public ArrayList<Double> m_stds;
+    public ArrayList<Double> m_kalmanInputTicks;
+    public ArrayList<Double> m_kalmanOutput;
+    public ArrayList<Integer> m_kalmanBuySellSignal;
 
 
 
@@ -55,6 +61,11 @@ public class BotDataPlotter {
     public TimeSeriesCollection m_tsCollection;
     public TimeSeriesCollection m_stdCollection;
 
+    XYSeries m_kalmanInputSeries = new XYSeries("Tick");
+    XYSeries m_kalmanOutputSeries = new XYSeries("Kalman");
+
+    public JFreeChart m_chart;
+    boolean m_chartCustomized;
 
     public BotDataPlotter() {
 
@@ -78,8 +89,14 @@ public class BotDataPlotter {
         this.m_stdCollection = new TimeSeriesCollection();
         this.m_stdCollection.addSeries(this.m_stdSeries);
 
+        this.m_kalmanInputTicks = null;
+        this.m_kalmanOutput = null;
+        this.m_kalmanBuySellSignal = null;
+        this.m_chartCustomized = false;
+
         // update plot data based on empoty reference
-        this.updatePlotData();
+        //this.updatePlotData();
+        this.updateKalmanPlot();
 
     }
 
@@ -88,6 +105,8 @@ public class BotDataPlotter {
         // always re-draw the last one
         // 1. convert data from reference to drawing data
         this.purgeDrawingData();
+
+
 
         for(int i = Math.max(m_ohlcSeries.getItemCount() , 0)  ; i < m_bars.size(); i++) {
 
@@ -109,12 +128,152 @@ public class BotDataPlotter {
             m_stdSeries.add(theMinute, m_stds.get(i));
 
         }
-
-        // 2. send message to re-draw the plot
-        //    m_ohlcSeries.addChangeListener();
     }
 
-    public JFreeChart createChart() {
+    public void updateKalmanPlot() {
+        // update the last data point
+        if(this.m_kalmanInputTicks == null) {
+            return;
+        }
+        // clear previous kalman data
+        this.m_kalmanInputSeries.clear();
+        this.m_kalmanOutputSeries.clear();
+
+        for(int i = 0; i < this.m_kalmanInputTicks.size(); i++) {
+            this.m_kalmanOutputSeries.add(i, this.m_kalmanOutput.get(i));
+            this.m_kalmanInputSeries.add(i, this.m_kalmanInputTicks.get(i));
+        }
+
+
+    }
+
+    private XYDataset createKalmanData() {
+
+        if(this.m_kalmanInputTicks == null) {
+            return null;
+        }
+
+        for(int i = 0; i < this.m_kalmanInputTicks.size(); i++) {
+            m_kalmanInputSeries.add(i, this.m_kalmanInputTicks.get(i));
+            m_kalmanOutputSeries.add(i, this.m_kalmanOutput.get(i));
+        }
+
+        XYSeriesCollection dataCollection = new XYSeriesCollection();
+        dataCollection.addSeries(m_kalmanInputSeries);
+        dataCollection.addSeries(m_kalmanOutputSeries);
+        System.out.println("kalman data is not empty: this.m_kalmanOutput.size(): " + this.m_kalmanOutput.size());
+        return dataCollection;
+    }
+
+    public void customizeChart() {
+        // customize chart
+        JFreeChart chart = this.m_chart;
+
+        XYPlot plot = (XYPlot) chart.getPlot();
+
+        // find out the max and min value for price series
+        XYSeriesCollection collection = (XYSeriesCollection)plot.getDataset();
+        XYSeries priceSeries = collection.getSeries(0);
+        double maxY = priceSeries.getMaxY();
+        double minY = priceSeries.getMinY();
+
+        // set max and min for range axis (y axis)
+        NumberAxis rangeAxis = (NumberAxis)plot.getRangeAxis();
+        rangeAxis.setRange(minY, maxY);
+
+        XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer() {
+
+            public Color getItemColor(int series, int item) {
+                // modify code here to change color for different part of the line in one serie line
+                if(series == 1) {
+
+                    int isBuy = 0;
+                    if(item < m_kalmanBuySellSignal.size()) {
+                        isBuy = m_kalmanBuySellSignal.get(item);
+                    }
+                    System.out.println("item: " + item + " buySell: " + isBuy);
+                    if(isBuy == 1) {
+
+                        return Color.red;
+                    }
+                    if(isBuy == 0){
+
+                        return Color.green;
+                    }
+                    if(isBuy == -1) {
+
+                        return Color.yellow;
+                    } else {
+                        return Color.yellow;
+                    }
+                } else {
+                    return Color.yellow;
+                }
+
+
+
+            }
+
+            @Override
+            protected void drawFirstPassShape(Graphics2D g2, int pass, int series, int item, Shape shape) {
+                super.drawFirstPassShape(g2, pass, series, item, shape);
+
+                //g2.setStroke(getItemStroke(series, item));
+                Color c1 = getItemColor(series, item - 1);
+                Color c2 = getItemColor(series, item);
+                // color of the line is determined by the 1st point, c1
+                GradientPaint linePaint = new GradientPaint(0, 0, c1, 0, 0, c2);
+                g2.setPaint(linePaint);
+                g2.draw(shape);
+            }
+        };
+
+        // Customize point shape
+        Rectangle rect = new Rectangle();
+        rect.setRect(-1,0,2,2); // cordiantes and dimension
+        renderer.setSeriesShape(1, rect);
+        Ellipse2D.Double ellipse = new Ellipse2D.Double(-1,0,2,2);
+
+        renderer.setSeriesShape(0, ellipse);
+
+        // Finally, attach the renderer
+        plot.setRenderer(renderer);
+
+        this.m_chartCustomized = true;
+    }
+
+    public JFreeChart createKalmanChart() {
+        // create the chart...
+        XYDataset dataCollection = createKalmanData();
+        Date today = new Date();
+        SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
+        JFreeChart chart = ChartFactory.createXYLineChart(
+                df.format(today), // chart title
+                "Count", // x axis label
+                "Price", // y axis label
+                dataCollection, // data
+                PlotOrientation.VERTICAL,
+                true, // include legend
+                true, // tooltips
+                false // urls
+        );
+
+        if(this.m_chart == chart ) {
+            System.out.println("two charts are equal " + chart);
+        } else {
+            System.out.println("two charts are different: " + this.m_chart + " vs " + chart);
+        }
+
+        this.m_chart = chart;
+
+
+
+
+
+        return chart;
+    }
+
+    public JFreeChart createFisherCombineChart() {
 
         // 0. create common domain axis for combined chart
         String timeAxisLabel = "5M";
@@ -172,6 +331,7 @@ public class BotDataPlotter {
 
     }
 
+    // set source for plotting Fisher bot
     public void setBarSource(ArrayList<Bar> bars) {
         this.m_bars = bars;
     }
@@ -184,4 +344,10 @@ public class BotDataPlotter {
     public void setStdSource(ArrayList<Double> stdSource) {
         this.m_stds = stdSource;
     }
+
+    // set source for plotting kalman bot
+    public void setKalmanTickSource(ArrayList<Double> ticks) {this.m_kalmanInputTicks = ticks; }
+    public void setKalmanOutputSource(ArrayList<Double> output) {this.m_kalmanOutput = output; }
+    public void setKalmanSignalSource(ArrayList<Integer> signal) {this.m_kalmanBuySellSignal = signal; }
+
 }

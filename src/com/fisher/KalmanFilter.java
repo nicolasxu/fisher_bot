@@ -36,9 +36,7 @@ public class KalmanFilter extends IFilter {
         this.sqrtK100 = Math.sqrt(this.smoothRatio/100.0);
         this.k100 = this.smoothRatio/100.0;
         this.buySellSignal = new ArrayList<Integer>();
-        System.out.println("smoothRatio: " + this.smoothRatio);
-        System.out.println("k100: " + k100);
-        System.out.println("sqrtK100: " + sqrtK100);
+
 
 
     }
@@ -64,6 +62,7 @@ public class KalmanFilter extends IFilter {
             if(i < 1) {
                 Double inputNumber = input.get(i);
                 output.add(inputNumber);
+                buySellSignal.add(-1);
                 this.previousVelocity = 0.0;
                 this.velocity = this.previousVelocity;
 
@@ -77,30 +76,15 @@ public class KalmanFilter extends IFilter {
                 }
                 this.distance = input.get(i) - output.get(i - 1);
                 this.distance = Double.parseDouble(df.format(this.distance));
-                if(i < 4) {
-                    //System.out.println("distance["+i+"]=input.get(i) - output.get(i - 1) = "+ input.get(i) +" - "+ output.get(i - 1) );
-                    //System.out.println("distance["+i+"]=" + this.distance);
-                }
-                this.error    = output.get(i-1) + this.distance * this.sqrtK100;
-                if(i < 4) {
-                    //System.out.println("error["+i+"]=output.get( "+i+"-1) + this.distance * this.sqrtK100 =" + output.get(i-1)+ "+" + this.distance * this.sqrtK100);
-                    //System.out.println("error["+i+"]=" + this.error);
-                }
-                if(i < 4) {
-                    //System.out.println("velocity["+i+"]="+ this.velocity +" + " + this.distance*this.k100 );
 
-                }
+                this.error    = output.get(i-1) + this.distance * this.sqrtK100;
+
                 this.velocity = this.velocity + this.distance*this.k100;
                 this.previousVelocity = this.velocity;
-                if(i < 4) {
 
-                    //System.out.println("velocity["+i+"]="+ this.velocity);
-                }
                 double currentBarValue = this.error + this.velocity;
                 //currentBarValue = Double.parseDouble(df.format(currentBarValue));
-                if(i < 4) {
-                    //System.out.println("IndBuffer["+i+"]=" + currentBarValue);
-                }
+
 
                 if(i >= output.size()) {
                     output.add(currentBarValue);
@@ -112,7 +96,7 @@ public class KalmanFilter extends IFilter {
                 if(this.signal == SignalMode.KALMAN) {
                     // Kalman signal
                     if(this.velocity > 0) {
-
+                        System.out.println("buySellSignal["+i+"]: " + 1);
                         if(i >= buySellSignal.size()) {
                             // buy
                             buySellSignal.add(1);
@@ -121,6 +105,8 @@ public class KalmanFilter extends IFilter {
                         }
 
                     } else {
+
+                        System.out.println("buySellSignal["+i+"]: " + 0);
                         if(i >= buySellSignal.size()) {
                             // sell
                             buySellSignal.add(0);

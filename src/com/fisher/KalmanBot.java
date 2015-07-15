@@ -19,6 +19,7 @@ public class KalmanBot implements IBot {
     double m_takeProfitSize;
     double m_commissionRate;
     double m_lastOrderPrice;
+    boolean m_takingProfitWorking;
 
     public KalmanBot (DataHandler handler) {
         this.handler = handler;
@@ -35,10 +36,12 @@ public class KalmanBot implements IBot {
         this.m_commissionRate = 2 * 0.00001; // 0.2 base point * tradeValue
         this.m_lastOrderPrice = 0; // init to 0, and will be assigned everything new order is created,
                                    // but not for take profit order
+        this.m_takingProfitWorking = false;
     }
 
     @Override
     public void calculate() {
+        System.out.println("KalmanBot calculating...");
         this.m_midTicks = handler.constantTicksToArrayList();
         this.m_kFilter.filter(this.m_midTicks, this.m_output);
     }
@@ -49,6 +52,7 @@ public class KalmanBot implements IBot {
     }
 
     public int calculateNewOrderAmount() {
+        System.out.println("calculateNewOrderAmount()...");
         // assuming next order will always reverse the direction of current position
         int    pos  = this.handler.m_position;
         double cost = this.handler.m_avgPositionCost;
@@ -58,7 +62,9 @@ public class KalmanBot implements IBot {
         // calculate profit/loss
 
         if(pos == 0) {
+
             double commissionAmount = this.m_initialOrderSize * this.m_commissionRate * 2 / this.m_takeProfitSize;
+            System.out.println("calculateNewOrderAmount() - since position is 0, next amount is: " + this.m_initialOrderSize + (int)commissionAmount );
             return this.m_initialOrderSize + (int)commissionAmount;
         }
 
@@ -121,24 +127,30 @@ public class KalmanBot implements IBot {
 
     public void tryTakeProfit() {
         if(this.handler.m_position == 0) {
-
+            this.m_takingProfitWorking = false;
             return;
         }
+        if(m_takingProfitWorking == false) {
 
-        if(this.handler.m_position > 0) {
+            if(this.handler.m_position > 0) {
 
-            // sell at bid price
-            double bidPrice = this.roundTo5(this.handler.m_currentBidPrice);
-            if(bidPrice - this.m_lastOrderPrice >= this.m_takeProfitSize) {
-                // good to close
-                sell(this.handler.m_position);
-            }
-        } else {
-            // buy at ask price
-            double askPrice = this.roundTo5(this.handler.m_currentAskPrice);
-            if(askPrice - this.m_lastOrderPrice >= this.m_takeProfitSize) {
-                // good to close
-                buy(-this.handler.m_position);
+                // sell at bid price
+                double bidPrice = this.roundTo5(this.handler.m_currentBidPrice);
+                if(bidPrice - this.m_lastOrderPrice >= this.m_takeProfitSize) {
+                    // good to close
+                    System.out.println("tryTakeProfit() - selling " + this.handler.m_position);
+                    this.m_takingProfitWorking = true;
+                    sell(this.handler.m_position);
+                }
+            } else {
+                // buy at ask price
+                double askPrice = this.roundTo5(this.handler.m_currentAskPrice);
+                if(askPrice - this.m_lastOrderPrice >= this.m_takeProfitSize) {
+                    // good to close
+                    System.out.println("tryTakeProfit() - buying " + this.handler.m_position);
+                    this.m_takingProfitWorking = true;
+                    buy(-this.handler.m_position);
+                }
             }
         }
     }
@@ -154,15 +166,18 @@ public class KalmanBot implements IBot {
         int signal0  = this.m_kFilter.buySellSignal.get(index);
         int signalM1 = this.m_kFilter.buySellSignal.get(index - 1);
 
+        /*
         if(signal0 == signalM1) {
             // in the same Kalman trend as the previous point
             // check for take profit
             this.tryTakeProfit();
         }
+        */
 
         if(signalM1 == 1 && signal0 == 0) {
             // sell
             int amount = this.calculateNewOrderAmount();
+            System.out.println("selling signal triggered, amount: " + amount);
             this.sell(amount);
             this.m_lastOrderPrice = this.roundTo5(this.handler.m_currentBidPrice);
         }
@@ -170,6 +185,7 @@ public class KalmanBot implements IBot {
         if(signalM1 == 0 && signal0 == 1) {
             // buy
             int amount = this.calculateNewOrderAmount();
+            System.out.println("buying signal triggered, amount: " + amount);
             this.buy(amount);
             this.m_lastOrderPrice = this.roundTo5(this.handler.m_currentAskPrice);
 
@@ -227,15 +243,14 @@ public class KalmanBot implements IBot {
         sellOrder.m_lmtPrice    = this.roundTo5(this.handler.m_currentAskPrice);
 
         sellOrder.m_totalQuantity = amount;
-        int buyOrderId = this.handler.m_reqId++;
+        int sellOrderId = this.handler.m_reqId++;
         // placing order
-        this.handler.m_request.placeOrder(buyOrderId, this.handler.m_contract, sellOrder);
-        System.out.println("Buy order placed, id: " + buyOrderId);
+        this.handler.m_request.placeOrder(sellOrderId, this.handler.m_contract, sellOrder);
+        System.out.println("Buy order placed, id: " + sellOrderId);
 
     }
 
     public void closePosition() {
-
 
         if(this.handler.m_position == 0) {
             System.out.println("closePosition() - position already zero");
